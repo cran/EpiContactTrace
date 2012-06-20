@@ -1,6 +1,6 @@
-ef2e9b5d5352b91f214bb904558e5e47 *DESCRIPTION
-19851a3b98bea027b14235a889501378 *NAMESPACE
-63e4b1386e0aa315b76c4919271547bb *NEWS
+af33ab0c25548613ef4e8a6019c06227 *DESCRIPTION
+e4807098183b86728e10563b24b96ebf *NAMESPACE
+1d187e65ee519a37ed7ccdd42f50af59 *NEWS
 e4bfbdbb4c1ce432ddacc78726ecfb77 *R/ContactTrace.r
 cd34d61e96de4aa16c3ce384bd619fb5 *R/Contacts.r
 4f2073dcd9563f0c5af6c1c79a227c31 *R/EpiContactTrace-package.r
@@ -10,8 +10,8 @@ bbf3a744bbe9c380f7c1901c9532a9aa *R/network-structure.r
 acd82019aaf158ec9896f7f64d04409c *R/network-summary.r
 545050084a8b058441b74f458717e299 *R/out-degree.r
 c91423b6dee04d5d3ebfde35fac4d593 *R/outgoing-contact-chain.r
-88e4a15071847a74a0a6fc5625f63e0c *R/plot.r
-c9470d819ef7af2f5e5f965d7af643eb *R/report.r
+638f8ded3021d8e0f0092e112db40730 *R/plot.r
+d8cbd8880b800b11f5c01a261dca26a6 *R/report.r
 cc1cc390f042268868f002462d85b298 *R/shortest-paths.r
 28c8496eb842698e80081fc114bff85b *R/show.r
 7fe51553b62bd87ce0c1d7066f474336 *R/trace.R
