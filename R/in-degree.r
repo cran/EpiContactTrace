@@ -3,27 +3,60 @@
 ##' The number of herds with direct movements of animals to the root herd
 ##' during the defined time window used for tracing.
 ##'
-##'
 ##' @name InDegree-methods
-##' @aliases InDegree InDegree-methods InDegree,Contacts-method
-##' InDegree,ContactTrace-method InDegree,list-method
+##' @aliases InDegree
+##' @aliases InDegree-methods
+##' @aliases InDegree,Contacts-method
+##' @aliases InDegree,ContactTrace-method
+##' @aliases InDegree,list-method
+##' @aliases InDegree,data.frame-method
 ##' @docType methods
-##' @return An integer vector.
 ##' @section Methods:
 ##' \describe{
-##'   \item{\code{signature(object = "Contacts")}}{
-##'     Get the InDegree of a \code{Contacts} object with ingoing direction.
-##'   }
-##'
-##'   \item{\code{signature(object = "ContactTrace")}}{
+##'   \item{\code{signature(x = "ContactTrace")}}{
 ##'     Get the InDegree of a \code{ContactTrace} object.
 ##'   }
 ##'
-##'   \item{\code{signature(object = "list")}}{
+##'   \item{\code{signature(x = "list")}}{
 ##'     Get the InDegree for a list of \code{ContactTrace} objects.
 ##'     Each item in the list must be a \code{ContactTrace} object.
 ##'   }
+##'
+##'   \item{\code{signature(x = "data.frame")}}{
+##'     Get the InDegree for a data.frame with movements, see examples.
+##'   }
 ##' }
+##' @seealso \code{\link{NetworkSummary}}
+##' @param x a ContactTrace object, or a list of ContactTrace objects
+##' or a \code{data.frame} with movements of animals between holdings,
+##' see \code{\link{TraceDateInterval}} for details.
+##' @param root vector of roots to perform contact tracing on.
+##' @param tEnd the last date to include ingoing movements
+##' @param days the number of previous days before tEnd to include
+##' ingoing movements
+##' @return A \code{data.frame} with the following columns:
+##' \describe{
+##'   \item{root}{
+##'     The root of the contact tracing
+##'   }
+##'
+##'   \item{inBegin}{
+##'     The first date to include ingoing movements
+##'   }
+##'
+##'   \item{inEnd}{
+##'     The last date to include ingoing movements
+##'   }
+##'
+##'   \item{inDays}{
+##'     The number of days in the interval inBegin to inEnd
+##'   }
+##'
+##'   \item{inDegree}{
+##'     The \code{\link{InDegree}} of the root within the time-interval
+##'   }
+##' }
+##'
 ##' @references \itemize{
 ##'   \item Dube, C., et al., A review of network analysis terminology
 ##'     and its application to foot-and-mouth disease modelling and policy
@@ -39,10 +72,10 @@
 ##' @export
 ##' @examples
 ##'
-##' # Load data
+##' ## Load data
 ##' data(transfers)
 ##'
-##' # Perform contact tracing
+##' ## Perform contact tracing
 ##' contactTrace <- Trace(movements=transfers,
 ##'                       root=2645,
 ##'                       tEnd='2005-10-31',
@@ -51,56 +84,82 @@
 ##' InDegree(contactTrace)
 ##'
 ##' \dontrun{
-##' # Perform contact tracing for all included herds
-##' # First extract all source and destination from the dataset
+##' ## Perform contact tracing for all included herds
+##' ## First extract all source and destination from the dataset
 ##' root <- sort(unique(c(transfers$source,
 ##'                       transfers$destination)))
 ##'
-##' # Perform contact tracing
-##' contactTrace <- Trace(movements=transfers,
-##'                       root=root,
-##'                       tEnd='2005-10-31',
-##'                       days=90)
-##'
-##' InDegree(contactTrace)
+##' ## Perform contact tracing
+##' result <- InDegree(transfers,
+##'                    root=root,
+##'                    tEnd='2005-10-31',
+##'                    days=90)
 ##' }
 ##'
 setGeneric('InDegree',
-           signature = 'object',
-           function(object) standardGeneric('InDegree'))
+           signature = 'x',
+           function(x, ...) standardGeneric('InDegree'))
 
-setMethod('InDegree',
-          signature(object = 'Contacts'),
-          function (object)
+## For internal use
+setGeneric('in_degree',
+           signature = 'x',
+           function(x) standardGeneric('in_degree'))
+
+## For internal use
+setMethod('in_degree',
+          signature(x = 'Contacts'),
+          function(x)
       {
-          if(!identical(object@direction, 'in')) {
+          if(!identical(x@direction, 'in')) {
               stop('Unable to determine InDegree for outgoing contacts')
           }
 
-          return(length(unique(object@source[object@destination==object@root])))
+          return(length(unique(x@source[x@destination==x@root])))
       }
 )
 
 setMethod('InDegree',
-          signature(object = 'ContactTrace'),
-          function (object)
+          signature(x = 'ContactTrace'),
+          function (x)
       {
-          return(InDegree(object@ingoingContacts))
+          return(NetworkSummary(x)[, c('root',
+                                       'inBegin',
+                                       'inEnd',
+                                       'inDays',
+                                       'inDegree')])
       }
 )
 
 setMethod('InDegree',
-          signature(object = 'list'),
-          function(object)
+          signature(x = 'list'),
+          function(x)
       {
-          if(!all(sapply(object, function(x) length(x)) == 1)) {
-              stop('Unexpected length of list')
+          return(NetworkSummary(x)[, c('root',
+                                       'inBegin',
+                                       'inEnd',
+                                       'inDays',
+                                       'inDegree')])
+      }
+)
+
+setMethod('InDegree',
+          signature(x = 'data.frame'),
+          function(x,
+                   root,
+                   tEnd,
+                   days)
+      {
+          if(any(missing(x),
+                 missing(root),
+                 missing(tEnd),
+                 missing(days))) {
+              stop('Missing parameters in call to InDegree')
           }
 
-          if(!all(sapply(object, function(x) class(x)) == 'ContactTrace')) {
-              stop('Unexpected object in list')
-          }
-
-          return(sapply(object, InDegree))
+          return(NetworkSummary(x, root, tEnd, days)[, c('root',
+                                                         'inBegin',
+                                                         'inEnd',
+                                                         'inDays',
+                                                         'inDegree')])
       }
 )

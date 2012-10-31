@@ -12,17 +12,16 @@
   \item{root}{vector of roots to perform contact tracing
   for.}
 
-  \item{inBegin}{the last date to include ingoing
+  \item{inBegin}{the first date to include ingoing
   movements}
 
-  \item{inEnd}{the number of previous days before inEndDate
-  to include ingoing movements}
+  \item{inEnd}{the last date to include ingoing movements}
 
   \item{outBegin}{the first date to include outgoing
   movements}
 
-  \item{outEnd}{the number of days from endStartDate to
-  include outgoing movements}
+  \item{outEnd}{the last date to include outgoing
+  movements}
 }
 \description{
   Contact tracing for a specied node(s) (root) during a
@@ -54,10 +53,10 @@
   category of the animal e.g. Cattle.  } }
 }
 \examples{
-# Load data
+## Load data
 data(transfers)
 
-# Perform contact tracing
+## Perform contact tracing
 contactTrace <- TraceDateInterval(movements=transfers,
                                   root=2645,
                                   inBegin='2005-08-01',
@@ -65,19 +64,19 @@ contactTrace <- TraceDateInterval(movements=transfers,
                                   outBegin='2005-08-01',
                                   outEnd='2005-10-31')
 
-# Show result of contact tracing
+## Show result of contact tracing
 show(contactTrace)
 
 \dontrun{
-# Plot in- and outgoing contact chain
+## Plot in- and outgoing contact chain
 plot(contactTrace)
 
-# Create a network summary for all included herds
-# First extract all source and destination from the dataset
+## Create a network summary for all included herds
+## First extract all source and destination from the dataset
 root <- sort(unique(c(transfers$source,
                       transfers$destination)))
 
-# Perform contact tracing
+## Perform contact tracing
 contactTrace <- TraceDateInterval(movements=transfers,
                                   root=root,
                                   inBegin='2005-08-01',

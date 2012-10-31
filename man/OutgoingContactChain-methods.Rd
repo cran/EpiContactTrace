@@ -2,12 +2,39 @@
 \name{OutgoingContactChain-methods}
 \alias{OutgoingContactChain}
 \alias{OutgoingContactChain-methods}
-\alias{OutgoingContactChain,Contacts-method}
 \alias{OutgoingContactChain,ContactTrace-method}
+\alias{OutgoingContactChain,data.frame-method}
 \alias{OutgoingContactChain,list-method}
 \title{\code{OutgoingContactChain}}
+\arguments{
+  \item{x}{a ContactTrace object, or a list of ContactTrace
+  objects or a \code{data.frame} with movements of animals
+  between holdings, see \code{\link{TraceDateInterval}} for
+  details.}
+
+  \item{root}{vector of roots to perform contact tracing
+  on.}
+
+  \item{tEnd}{the last date to include outgoing movements}
+
+  \item{days}{the number of previous days before tEnd to
+  include outgoing movements}
+}
 \value{
-  An integer vector.
+  A \code{data.frame} with the following columns:
+  \describe{ \item{root}{ The root of the contact tracing }
+
+  \item{outBegin}{ The first date to include outgoing
+  movements }
+
+  \item{outEnd}{ The last date to include outgoing
+  movements }
+
+  \item{outDays}{ The number of days in the interval
+  outBegin to outEnd }
+
+  \item{outDegree}{ The \code{\link{OutgoingContactChain}}
+  of the root within the time-interval } }
 }
 \description{
   The outgoing contact chain is the number of holdings in
@@ -17,23 +44,24 @@
   tracing.
 }
 \section{Methods}{
-  \describe{ \item{\code{signature(object = "Contacts")}}{
-  Get the OutgoingContactChain of a \code{Contacts} object
-  with outgoing direction.  }
+  \describe{ \item{\code{signature(x = "ContactTrace")}}{
+  Get the OutgoingContactChain of a \code{ContactTrace}
+  object.  }
 
-  \item{\code{signature(object = "ContactTrace")}}{ Get the
-  OutgoingContactChain of a \code{ContactTrace} object.  }
-
-  \item{\code{signature(object = "list")}}{ Get the
+  \item{\code{signature(x = "list")}}{ Get the
   OutgoingContactChain for a list of \code{ContactTrace}
   objects.  Each item in the list must be a
-  \code{ContactTrace} object.  } }
+  \code{ContactTrace} object.  }
+
+  \item{\code{signature(x = "data.frame")}}{ Get the
+  OutgoingContactChain for a data.frame with movements, see
+  examples.  } }
 }
 \examples{
-# Load data
+## Load data
 data(transfers)
 
-# Perform contact tracing
+## Perform contact tracing
 contactTrace <- Trace(movements=transfers,
                       root=2645,
                       tEnd='2005-10-31',
@@ -42,18 +70,16 @@ contactTrace <- Trace(movements=transfers,
 OutgoingContactChain(contactTrace)
 
 \dontrun{
-# Perform contact tracing for all included herds
-# First extract all source and destination from the dataset
+## Perform contact tracing for all included herds
+## First extract all source and destination from the dataset
 root <- sort(unique(c(transfers$source,
                       transfers$destination)))
 
-# Perform contact tracing
-contactTrace <- Trace(movements=transfers,
-                      root=root,
-                      tEnd='2005-10-31',
-                      days=90)
-
-OutgoingContactChain(contactTrace)
+## Perform contact tracing
+result <- OutgoingContactChain(transfers,
+                               root=root,
+                               tEnd='2005-10-31',
+                               days=90)
 }
 }
 \references{
@@ -68,6 +94,9 @@ OutgoingContactChain(contactTrace)
   disease control and riskbased surveillance.  Preventive
   Veterinary Medicine 99 (2011) 78-90, doi:
   10.1016/j.prevetmed.2010.12.009 }
+}
+\seealso{
+  \code{\link{NetworkSummary}}
 }
 \keyword{methods}
 

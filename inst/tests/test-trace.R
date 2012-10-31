@@ -1,8 +1,100 @@
 context('Contact Tracing')
 
-test_that('TraceDateInterval parameter validation', {
+test_that('Missing parameters', {
     expect_that(TraceDateInterval(), throws_error('Missing parameters in call to TraceDateInterval'))
 
+    expect_that(Trace(data.frame(),
+                      tEnd='2005-10-31',
+                      days=90),
+                throws_error('Missing parameters in call to Trace'))
+
+    expect_that(Trace(data.frame(),
+                      root=1,
+                      days=90),
+                throws_error('Missing parameters in call to Trace'))
+
+    expect_that(Trace(data.frame(),
+                      root=1,
+                      tEnd='2005-10-31'),
+                throws_error('Missing parameters in call to Trace'))
+
+    expect_that(IngoingContactChain(data.frame(),
+                                    tEnd='2005-10-31',
+                                    days=90),
+                throws_error('Missing parameters in call to IngoingContactChain'))
+
+    expect_that(IngoingContactChain(data.frame(),
+                                    root=1,
+                                    days=90),
+                throws_error('Missing parameters in call to IngoingContactChain'))
+
+    expect_that(IngoingContactChain(data.frame(),
+                                    root=1,
+                                    tEnd='2005-10-31'),
+                throws_error('Missing parameters in call to IngoingContactChain'))
+
+    expect_that(OutgoingContactChain(data.frame(),
+                                     tEnd='2005-10-31',
+                                     days=90),
+                throws_error('Missing parameters in call to OutgoingContactChain'))
+
+    expect_that(OutgoingContactChain(data.frame(),
+                                     root=1,
+                                     days=90),
+                throws_error('Missing parameters in call to OutgoingContactChain'))
+
+    expect_that(OutgoingContactChain(data.frame(),
+                                     root=1,
+                                     tEnd='2005-10-31'),
+                throws_error('Missing parameters in call to OutgoingContactChain'))
+
+    expect_that(InDegree(data.frame(),
+                         tEnd='2005-10-31',
+                         days=90),
+                throws_error('Missing parameters in call to InDegree'))
+
+    expect_that(InDegree(data.frame(),
+                         root=1,
+                         days=90),
+                throws_error('Missing parameters in call to InDegree'))
+
+    expect_that(InDegree(data.frame(),
+                         root=1,
+                         tEnd='2005-10-31'),
+                throws_error('Missing parameters in call to InDegree'))
+
+    expect_that(OutDegree(data.frame(),
+                          tEnd='2005-10-31',
+                          days=90),
+                throws_error('Missing parameters in call to OutDegree'))
+
+    expect_that(OutDegree(data.frame(),
+                          root=1,
+                          days=90),
+                throws_error('Missing parameters in call to OutDegree'))
+
+    expect_that(OutDegree(data.frame(),
+                          root=1,
+                          tEnd='2005-10-31'),
+                throws_error('Missing parameters in call to OutDegree'))
+
+    expect_that(NetworkSummary(data.frame(),
+                               tEnd='2005-10-31',
+                               days=90),
+                throws_error('Missing parameters in call to NetworkSummary'))
+
+    expect_that(NetworkSummary(data.frame(),
+                               root=1,
+                               days=90),
+                throws_error('Missing parameters in call to NetworkSummary'))
+
+    expect_that(NetworkSummary(data.frame(),
+                               root=1,
+                               tEnd='2005-10-31'),
+                throws_error('Missing parameters in call to NetworkSummary'))
+})
+
+test_that('TraceDateInterval parameter validation', {
     expect_that(TraceDateInterval(movements=1:3,
                                   root=1L,
                                   inBegin=as.Date('2011-08-10'),
@@ -35,13 +127,45 @@ test_that('TraceDateInterval parameter validation', {
                                   outEnd=as.Date('2011-08-10')),
                 throws_error('movements must contain the columns source, destination and t.'))
 
-    expect_that(TraceDateInterval(movements=data.frame(source=1L, destination=2L, t='2011-08-10'),
+    expect_that(TraceDateInterval(movements=data.frame(source=1L, destination=2L, t=1),
                                   root=1L,
                                   inBegin=as.Date('2011-08-10'),
                                   inEnd=as.Date('2011-08-10'),
                                   outBegin=as.Date('2011-08-10'),
                                   outEnd=as.Date('2011-08-10')),
                 throws_error('invalid class of column t in movements'))
+
+    expect_that(TraceDateInterval(movements=data.frame(source=c(1L,NA), destination=c(2L,3L), t=c('2011-08-10', '2011-08-10')),
+                                  root=1L,
+                                  inBegin=as.Date('2011-08-10'),
+                                  inEnd=as.Date('2011-08-10'),
+                                  outBegin=as.Date('2011-08-10'),
+                                  outEnd=as.Date('2011-08-10')),
+                throws_error('source in movements contains NA'))
+
+    expect_that(TraceDateInterval(movements=data.frame(source=c(1L,2L), destination=c(2L,NA), t=c('2011-08-10', '2011-08-10')),
+                                  root=1L,
+                                  inBegin=as.Date('2011-08-10'),
+                                  inEnd=as.Date('2011-08-10'),
+                                  outBegin=as.Date('2011-08-10'),
+                                  outEnd=as.Date('2011-08-10')),
+                throws_error('destination in movements contains NA'))
+
+    expect_that(TraceDateInterval(movements=data.frame(source=c(1L,2L), destination=c(2L,3L), t=c('2011-08-10', NA)),
+                                  root=1L,
+                                  inBegin=as.Date('2011-08-10'),
+                                  inEnd=as.Date('2011-08-10'),
+                                  outBegin=as.Date('2011-08-10'),
+                                  outEnd=as.Date('2011-08-10')),
+                throws_error('t in movements contains NA'))
+
+    expect_that(TraceDateInterval(movements=data.frame(source=c(1L,2L), destination=c(2L,3L), t=c('2011-08-10', NA)),
+                                  root=1L,
+                                  inBegin=as.Date('2011-08-10'),
+                                  inEnd=as.Date('2011-08-10'),
+                                  outBegin=as.Date('2011-08-10'),
+                                  outEnd=as.Date('2011-08-10')),
+                throws_error('t in movements contains NA'))
 
     expect_that(TraceDateInterval(movements=data.frame(source=1L, destination=2L, t=as.Date('2011-08-10'), n='3'),
                                   root=1L,
@@ -160,8 +284,8 @@ test_that('IngoingContactChain', {
                           outBegin = as.Date('2010-08-01'),
                           outEnd = as.Date('2010-08-31'))
 
-  expect_that(IngoingContactChain(ct), is_identical_to(7L))
-  expect_that(OutgoingContactChain(ct), is_identical_to(0L))
+  expect_that(IngoingContactChain(ct)$ingoingContactChain, is_identical_to(7L))
+  expect_that(OutgoingContactChain(ct)$outgoingContactChain, is_identical_to(0L))
 
   load(file="data/movements2.rda")
 
@@ -172,8 +296,8 @@ test_that('IngoingContactChain', {
                           outBegin = as.Date('2010-08-01'),
                           outEnd = as.Date('2010-08-31'))
 
-  expect_that(IngoingContactChain(ct), is_identical_to(3L))
-  expect_that(OutgoingContactChain(ct), is_identical_to(0L))
+  expect_that(IngoingContactChain(ct)$ingoingContactChain, is_identical_to(3L))
+  expect_that(OutgoingContactChain(ct)$outgoingContactChain, is_identical_to(0L))
 
   load(file="data/movements5.rda")
 
@@ -184,8 +308,8 @@ test_that('IngoingContactChain', {
                           outBegin = as.Date('2010-09-01'),
                           outEnd = as.Date('2010-10-01'))
 
-  expect_that(IngoingContactChain(ct), is_identical_to(1L))
-  expect_that(OutgoingContactChain(ct), is_identical_to(0L))
+  expect_that(IngoingContactChain(ct)$ingoingContactChain, is_identical_to(1L))
+  expect_that(OutgoingContactChain(ct)$outgoingContactChain, is_identical_to(0L))
 })
 
 test_that('OutgoingContactChain', {
@@ -198,8 +322,8 @@ test_that('OutgoingContactChain', {
                           outBegin = as.Date('2010-08-01'),
                           outEnd = as.Date('2010-11-09'))
 
-  expect_that(IngoingContactChain(ct), is_identical_to(0L))
-  expect_that(OutgoingContactChain(ct), is_identical_to(7L))
+  expect_that(IngoingContactChain(ct)$ingoingContactChain, is_identical_to(0L))
+  expect_that(OutgoingContactChain(ct)$outgoingContactChain, is_identical_to(7L))
 
   load(file="data/movements5.rda")
 
@@ -210,8 +334,33 @@ test_that('OutgoingContactChain', {
                           outBegin = as.Date('2010-08-01'),
                           outEnd = as.Date('2010-08-31'))
 
-  expect_that(IngoingContactChain(ct), is_identical_to(0L))
-  expect_that(OutgoingContactChain(ct), is_identical_to(1L))
+  expect_that(IngoingContactChain(ct)$ingoingContactChain, is_identical_to(0L))
+  expect_that(OutgoingContactChain(ct)$outgoingContactChain, is_identical_to(1L))
+
+  load(file="data/movements7.rda")
+
+  ct <- TraceDateInterval(movements7,
+                          root = 1L,
+                          inBegin = as.Date('2010-10-10'),
+                          inEnd = as.Date('2010-10-20'),
+                          outBegin = as.Date('2010-10-10'),
+                          outEnd = as.Date('2010-10-20'))
+
+  expect_that(IngoingContactChain(ct)$ingoingContactChain, is_identical_to(0L))
+  expect_that(OutgoingContactChain(ct)$outgoingContactChain, is_identical_to(2L))
+
+  expect_that(NetworkSummary(movements7, 1, '2010-10-20', 10),
+              is_identical_to(data.frame(root="1",
+                                         inBegin=as.Date("2010-10-10"),
+                                         inEnd=as.Date("2010-10-20"),
+                                         inDays=10,
+                                         outBegin=as.Date("2010-10-10"),
+                                         outEnd=as.Date("2010-10-20"),
+                                         outDays=10,
+                                         inDegree=0L,
+                                         outDegree=1L,
+                                         ingoingContactChain=0L,
+                                         outgoingContactChain=2L)))
 })
 
 test_that('InDegree', {
@@ -224,8 +373,21 @@ test_that('InDegree', {
                           outBegin = as.Date('2010-08-01'),
                           outEnd = as.Date('2010-08-31'))
 
-  expect_that(InDegree(ct), is_identical_to(1L))
-  expect_that(OutDegree(ct), is_identical_to(0L))
+  expect_that(InDegree(ct)$inDegree, is_identical_to(1L))
+  expect_that(OutDegree(ct)$outDegree, is_identical_to(0L))
+
+  ## Test with NetworkSummary
+  expect_that(NetworkSummary(movements2,
+                             root = 4,
+                             tEnd = '2010-09-01',
+                             days = 30)$inDegree,
+              is_identical_to(1L))
+
+  expect_that(NetworkSummary(movements2,
+                             root = 4,
+                             tEnd = '2010-08-31',
+                             days = 30)$outDegree,
+              is_identical_to(0L))
 
   ct <- TraceDateInterval(movements2,
                           root = 4L,
@@ -234,8 +396,21 @@ test_that('InDegree', {
                           outBegin = as.Date('2010-08-01'),
                           outEnd = as.Date('2010-08-31'))
 
-  expect_that(InDegree(ct), is_identical_to(0L))
-  expect_that(OutDegree(ct), is_identical_to(0L))
+  expect_that(InDegree(ct)$inDegree, is_identical_to(0L))
+  expect_that(OutDegree(ct)$outDegree, is_identical_to(0L))
+
+  ## Test with NetworkSummary
+  expect_that(NetworkSummary(movements2,
+                             root = 4,
+                             tEnd = '2010-09-01',
+                             days = 5)$inDegree,
+              is_identical_to(0L))
+
+  expect_that(NetworkSummary(movements2,
+                             root = 4,
+                             tEnd = '2010-08-31',
+                             days = 30)$outDegree,
+              is_identical_to(0L))
 })
 
 test_that('OutDegree', {
@@ -248,8 +423,21 @@ test_that('OutDegree', {
                           outBegin = as.Date('2010-08-01'),
                           outEnd = as.Date('2010-08-31'))
 
-  expect_that(InDegree(ct), is_identical_to(0L))
-  expect_that(OutDegree(ct), is_identical_to(3L))
+  expect_that(InDegree(ct)$inDegree, is_identical_to(0L))
+  expect_that(OutDegree(ct)$outDegree, is_identical_to(3L))
+
+  ## Test with NetworkSummary
+  expect_that(NetworkSummary(movements3,
+                             root = 1,
+                             tEnd = '2010-09-01',
+                             days = 30)$inDegree,
+              is_identical_to(0L))
+
+  expect_that(NetworkSummary(movements3,
+                             root = 1,
+                             tEnd = '2010-08-31',
+                             days = 30)$outDegree,
+              is_identical_to(3L))
 
   ct <- TraceDateInterval(movements3,
                           root = 1L,
@@ -258,8 +446,21 @@ test_that('OutDegree', {
                           outBegin = as.Date('2010-08-01'),
                           outEnd = as.Date('2010-08-16'))
 
-  expect_that(InDegree(ct), is_identical_to(0L))
-  expect_that(OutDegree(ct), is_identical_to(2L))
+  expect_that(InDegree(ct)$inDegree, is_identical_to(0L))
+  expect_that(OutDegree(ct)$outDegree, is_identical_to(2L))
+
+  ## Test with NetworkSummary
+  expect_that(NetworkSummary(movements3,
+                             root = 1,
+                             tEnd = '2010-09-01',
+                             days = 30)$inDegree,
+              is_identical_to(0L))
+
+  expect_that(NetworkSummary(movements3,
+                             root = 1,
+                             tEnd = '2010-08-16',
+                             days = 15)$outDegree,
+              is_identical_to(2L))
 })
 
 test_that('Root not in movements', {
@@ -272,8 +473,21 @@ test_that('Root not in movements', {
                           outBegin = as.Date('2010-08-01'),
                           outEnd = as.Date('2010-08-31'))
 
-  expect_that(InDegree(ct), is_identical_to(0L))
-  expect_that(OutDegree(ct), is_identical_to(0L))
+  expect_that(InDegree(ct)$inDegree, is_identical_to(0L))
+  expect_that(OutDegree(ct)$outDegree, is_identical_to(0L))
+
+  ## Test with NetworkSummary
+  expect_that(NetworkSummary(movements3,
+                             root = 15,
+                             tEnd = '2010-09-01',
+                             days = 30)$inDegree,
+              is_identical_to(0L))
+
+  expect_that(NetworkSummary(movements3,
+                             root = 15,
+                             tEnd = '2010-08-31',
+                             days = 30)$outDegree,
+              is_identical_to(0L))
 })
 
 test_that('Loops', {
@@ -306,8 +520,28 @@ test_that('Duplicate movements', {
     load(file="data/movements6.rda")
 
     ct.1 <- Trace(movements6, 2645, '2005-10-31', 90)
-    ct.2 <- Trace(as(ct.1, 'data.frame'), 2645, '2005-10-31', 90)
+    ct.1.df <- as(ct.1, 'data.frame')
 
-    expect_that(ct.2, is_identical_to(ct.1))
+    ct.2 <- Trace(ct.1.df, 2645, '2005-10-31', 90)
+    ct.2.df <- as(ct.2, 'data.frame')
+
+    ct.1.df <- ct.1.df[, c('source',
+                           'destination',
+                           't',
+                           'id',
+                           'n',
+                           'category')]
+
+    ct.2.df <- ct.2.df[, c('source',
+                           'destination',
+                           't',
+                           'id',
+                           'n',
+                           'category')]
+
+    ct.1.df <- ct.1.df[order(1:6),]
+    ct.2.df <- ct.2.df[order(1:6),]
+
+    expect_that(ct.2.df, is_identical_to(ct.1.df))
 })
 

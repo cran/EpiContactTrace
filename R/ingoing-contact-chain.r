@@ -6,24 +6,56 @@
 ##'
 ##'
 ##' @name IngoingContactChain-methods
-##' @aliases IngoingContactChain IngoingContactChain-methods
-##' IngoingContactChain,Contacts-method IngoingContactChain,ContactTrace-method
-##' IngoingContactChain,list-method
+##' @aliases IngoingContactChain
+##' @aliases IngoingContactChain-methods
+##' @aliases IngoingContactChain,ContactTrace-method
+##' @aliases IngoingContactChain,list-method
+##' @aliases IngoingContactChain,data.frame-method
 ##' @docType methods
-##' @return An integer vector.
-##' @section Methods:
+##' @seealso \code{\link{NetworkSummary}}
+##' @param x a ContactTrace object, or a list of ContactTrace objects
+##' or a \code{data.frame} with movements of animals between holdings,
+##' see \code{\link{TraceDateInterval}} for details.
+##' @param root vector of roots to perform contact tracing on.
+##' @param tEnd the last date to include ingoing movements
+##' @param days the number of previous days before tEnd to include
+##' ingoing movements
+##' @return A \code{data.frame} with the following columns:
 ##' \describe{
-##'   \item{\code{signature(object = "Contacts")}}{
-##'     Get the IngoingContactChain of a \code{Contacts} object with ingoing direction.
+##'   \item{root}{
+##'     The root of the contact tracing
 ##'   }
 ##'
-##'   \item{\code{signature(object = "ContactTrace")}}{
+##'   \item{inBegin}{
+##'     The first date to include ingoing movements
+##'   }
+##'
+##'   \item{inEnd}{
+##'     The last date to include ingoing movements
+##'   }
+##'
+##'   \item{inDays}{
+##'     The number of days in the interval inBegin to inEnd
+##'   }
+##'
+##'   \item{ingoingContactChain}{
+##'     The \code{\link{IngoingContactChain}} of the root within the time-interval
+##'   }
+##' }
+##'
+##' @section Methods:
+##' \describe{
+##'   \item{\code{signature(x = "ContactTrace")}}{
 ##'     Get the IngoingContactChain of a \code{ContactTrace} object.
 ##'   }
 ##'
-##'   \item{\code{signature(object = "list")}}{
+##'   \item{\code{signature(x = "list")}}{
 ##'     Get the IngoingContactChain for a list of \code{ContactTrace} objects.
 ##'     Each item in the list must be a \code{ContactTrace} object.
+##'   }
+##'
+##'   \item{\code{signature(x = "data.frame")}}{
+##'     Get the IngoingContactChain for a data.frame with movements, see examples.
 ##'   }
 ##' }
 ##' @references \itemize{
@@ -41,10 +73,10 @@
 ##' @export
 ##' @examples
 ##'
-##' # Load data
+##' ## Load data
 ##' data(transfers)
 ##'
-##' # Perform contact tracing
+##' ## Perform contact tracing
 ##' contactTrace <- Trace(movements=transfers,
 ##'                       root=2645,
 ##'                       tEnd='2005-10-31',
@@ -53,56 +85,83 @@
 ##' IngoingContactChain(contactTrace)
 ##'
 ##' \dontrun{
-##' # Perform contact tracing for all included herds
-##' # First extract all source and destination from the dataset
+##' ## Perform contact tracing for all included herds
+##' ## First extract all source and destination from the dataset
 ##' root <- sort(unique(c(transfers$source,
 ##'                       transfers$destination)))
 ##'
-##' # Perform contact tracing
-##' contactTrace <- Trace(movements=transfers,
-##'                       root=root,
-##'                       tEnd='2005-10-31',
-##'                       days=90)
-##'
-##' IngoingContactChain(contactTrace)
+##' ## Perform contact tracing
+##' result <- IngoingContactChain(transfers,
+##'                               root=root,
+##'                               tEnd='2005-10-31',
+##'                               days=90)
 ##' }
 ##'
 setGeneric('IngoingContactChain',
-           signature = 'object',
-           function(object) standardGeneric('IngoingContactChain'))
+           signature = 'x',
+           function(x, ...) standardGeneric('IngoingContactChain'))
 
-setMethod('IngoingContactChain',
-          signature(object = 'Contacts'),
-          function (object)
+## For internal use
+setGeneric('ingoing_contact_chain',
+           signature = 'x',
+           function(x) standardGeneric('ingoing_contact_chain'))
+
+## For internal use
+setMethod('ingoing_contact_chain',
+          signature(x = 'Contacts'),
+          function (x)
       {
-          if(!identical(object@direction, 'in')) {
+          if(!identical(x@direction, 'in')) {
               stop('Unable to determine IngoingContactChain for outgoing contacts')
           }
 
-          return(length(setdiff(object@source,object@root)))
+          return(length(setdiff(x@source,x@root)))
       }
 )
 
 setMethod('IngoingContactChain',
-          signature(object = 'ContactTrace'),
-          function (object)
+          signature(x = 'ContactTrace'),
+          function (x)
       {
-          IngoingContactChain(object@ingoingContacts)
+          return(NetworkSummary(x)[, c('root',
+                                       'inBegin',
+                                       'inEnd',
+                                       'inDays',
+                                       'ingoingContactChain')])
       }
 )
 
 setMethod('IngoingContactChain',
-          signature(object = 'list'),
-          function(object)
+          signature(x = 'list'),
+          function(x)
       {
-          if(!all(sapply(object, function(x) length(x)) == 1)) {
-              stop('Unexpected length of list')
-          }
-
-          if(!all(sapply(object, function(x) class(x)) == 'ContactTrace')) {
-              stop('Unexpected object in list')
-          }
-
-          return(sapply(object, IngoingContactChain))
+          return(NetworkSummary(x)[, c('root',
+                                       'inBegin',
+                                       'inEnd',
+                                       'inDays',
+                                       'ingoingContactChain')])
       }
 )
+
+setMethod('IngoingContactChain',
+          signature(x = 'data.frame'),
+          function(x,
+                   root,
+                   tEnd,
+                   days)
+      {
+          if(any(missing(x),
+                 missing(root),
+                 missing(tEnd),
+                 missing(days))) {
+              stop('Missing parameters in call to IngoingContactChain')
+          }
+
+          return(NetworkSummary(x, root, tEnd, days)[, c('root',
+                                                         'inBegin',
+                                                         'inEnd',
+                                                         'inDays',
+                                                         'ingoingContactChain')])
+      }
+)
+

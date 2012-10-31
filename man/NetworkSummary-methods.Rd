@@ -3,6 +3,7 @@
 \alias{NetworkSummary}
 \alias{NetworkSummary-methods}
 \alias{NetworkSummary,ContactTrace-method}
+\alias{NetworkSummary,data.frame-method}
 \alias{NetworkSummary,list-method}
 \title{\code{NetworkSummary}}
 \value{
@@ -43,21 +44,23 @@
   \code{\link{OutgoingContactChain}}.
 }
 \section{Methods}{
-  \describe{ \item{\code{signature(object =
-  "ContactTrace")}}{ Get the network summary for the
-  ingoing and outgoing \code{Contacts} of a ContactTrace
-  object.  }
+  \describe{ \item{\code{signature(x = "ContactTrace")}}{
+  Get the network summary for the ingoing and outgoing
+  \code{Contacts} of a ContactTrace object.  }
 
-  \item{\code{signature(object = "list")}}{ Get the network
+  \item{\code{signature(x = "list")}}{ Get the network
   summary for a list of \code{ContactTrace} objects.  Each
   item in the list must be a \code{ContactTrace} object.  }
-  }
+
+  \item{\code{signature(x = "data.frame")}}{ Get the
+  network summary for a data.frame with movements, see
+  examples.  } }
 }
 \examples{
-# Load data
+## Load data
 data(transfers)
 
-# Perform contact tracing
+## Perform contact tracing
 contactTrace <- Trace(movements=transfers,
                       root=2645,
                       tEnd='2005-10-31',
@@ -66,18 +69,39 @@ contactTrace <- Trace(movements=transfers,
 NetworkSummary(contactTrace)
 
 \dontrun{
-# Create a network summary for all included herds
-# First extract all source and destination from the dataset
+
+## When calculating the network summary for a data.frame of movements
+## a data.frame for each combination of root, tEnd and days are returned.
+root <- c(1,2,3)
+tEnd <- c("2005-09-01", "2005-10-01")
+days <- c(30, 45)
+
+## The network summary are calculated at the following
+## 12 combinations.
+## root = 1, tEnd = "2005-09-01", days = 30
+## root = 1, tEnd = "2005-09-01", days = 45
+## root = 1, tEnd = "2005-10-01", days = 30
+## root = 1, tEnd = "2005-10-01", days = 45
+## root = 2, tEnd = "2005-09-01", days = 30
+## root = 2, tEnd = "2005-09-01", days = 45
+## root = 2, tEnd = "2005-10-01", days = 30
+## root = 2, tEnd = "2005-10-01", days = 45
+## root = 3, tEnd = "2005-09-01", days = 30
+## root = 3, tEnd = "2005-09-01", days = 45
+## root = 3, tEnd = "2005-10-01", days = 30
+## root = 3, tEnd = "2005-10-01", days = 45
+NetworkSummary(transfers, root, tEnd, days)
+
+## Create a network summary for all included herds
+## First extract all source and destination from the dataset
 root <- sort(unique(c(transfers$source,
                       transfers$destination)))
 
-# Perform contact tracing
-contactTrace <- Trace(movements=transfers,
-                      root=root,
-                      tEnd='2005-10-31',
-                      days=90)
-
-NetworkSummary(contactTrace)
+## Perform contact tracing
+result <- NetworkSumary(transfers,
+                        root=root,
+                        tEnd='2005-10-31',
+                        days=90)
 }
 }
 \references{
