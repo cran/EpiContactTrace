@@ -1,3 +1,23 @@
+## Copyright 2013 Stefan Widgren and Maria Noremark,
+## National Veterinary Institute, Sweden
+##
+## Licensed under the EUPL, Version 1.1 or - as soon they
+## will be approved by the European Commission - subsequent
+## versions of the EUPL (the "Licence");
+## You may not use this work except in compliance with the
+## Licence.
+## You may obtain a copy of the Licence at:
+##
+## http://ec.europa.eu/idabc/eupl
+##
+## Unless required by applicable law or agreed to in
+## writing, software distributed under the Licence is
+## distributed on an "AS IS" basis,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+## express or implied.
+## See the Licence for the specific language governing
+## permissions and limitations under the Licence.
+
 ##' \code{OutgoingContactChain}
 ##'
 ##' The outgoing contact chain is the number of holdings in the network of
@@ -8,6 +28,7 @@
 ##' @name OutgoingContactChain-methods
 ##' @aliases OutgoingContactChain
 ##' @aliases OutgoingContactChain-methods
+##' @aliases OutgoingContactChain,Contacts-method
 ##' @aliases OutgoingContactChain,ContactTrace-method
 ##' @aliases OutgoingContactChain,list-method
 ##' @aliases OutgoingContactChain,data.frame-method
@@ -15,11 +36,17 @@
 ##' @seealso \code{\link{NetworkSummary}}
 ##' @param x a ContactTrace object, or a list of ContactTrace objects
 ##' or a \code{data.frame} with movements of animals between holdings,
-##' see \code{\link{TraceDateInterval}} for details.
-##' @param root vector of roots to perform contact tracing on.
-##' @param tEnd the last date to include outgoing movements
+##' see \code{\link{Trace}} for details.
+##' @param root vector of roots to calculate outgoing contact chain
+##' for.
+##' @param tEnd the last date to include outgoing movements. Defaults
+##' to \code{NULL}
 ##' @param days the number of previous days before tEnd to include
-##' outgoing movements
+##' outgoing movements. Defaults to \code{NULL}
+##' @param outBegin the first date to include outgoing
+##' movements. Defaults to \code{NULL}
+##' @param outEnd the last date to include outgoing movements. Defaults
+##' to \code{NULL}
 ##' @return A \code{data.frame} with the following columns:
 ##' \describe{
 ##'   \item{root}{
@@ -75,38 +102,42 @@
 ##' ## Load data
 ##' data(transfers)
 ##'
-##' ## Perform contact tracing
+##' ## Perform contact tracing using tEnd and days
 ##' contactTrace <- Trace(movements=transfers,
 ##'                       root=2645,
 ##'                       tEnd='2005-10-31',
-##'                       days=90)
+##'                       days=91)
 ##'
-##' OutgoingContactChain(contactTrace)
+##' ## Calculate outgoing contact chain from a ContactTrace object
+##' oc.1 <- OutgoingContactChain(contactTrace)
+##'
+##' ## Calculate outgoing contact chain using tEnd and days
+##' oc.2 <- OutgoingContactChain(transfers,
+##'                             root=2645,
+##'                             tEnd='2005-10-31',
+##'                             days=91)
+##'
+##' ## Check that the result is identical
+##' identical(oc.1, oc.2)
 ##'
 ##' \dontrun{
-##' ## Perform contact tracing for all included herds
+##' ## Calculate outgoing contact chain for all included herds
 ##' ## First extract all source and destination from the dataset
 ##' root <- sort(unique(c(transfers$source,
 ##'                       transfers$destination)))
 ##'
-##' ## Perform contact tracing
+##' ## Calculate outgoing contact chain
 ##' result <- OutgoingContactChain(transfers,
 ##'                                root=root,
 ##'                                tEnd='2005-10-31',
-##'                                days=90)
+##'                                days=91)
 ##' }
 ##'
 setGeneric('OutgoingContactChain',
            signature = 'x',
            function(x, ...) standardGeneric('OutgoingContactChain'))
 
-## For internal use
-setGeneric('outgoing_contact_chain',
-           signature = 'x',
-           function(x) standardGeneric('outgoing_contact_chain'))
-
-## For internal use
-setMethod('outgoing_contact_chain',
+setMethod('OutgoingContactChain',
           signature(x = 'Contacts'),
           function (x)
       {
@@ -146,21 +177,35 @@ setMethod('OutgoingContactChain',
           signature(x = 'data.frame'),
           function(x,
                    root,
-                   tEnd,
-                   days)
+                   tEnd = NULL,
+                   days = NULL,
+                   outBegin = NULL,
+                   outEnd = NULL)
       {
-          if(any(missing(x),
-                 missing(root),
-                 missing(tEnd),
-                 missing(days))) {
+          if(missing(root)) {
               stop('Missing parameters in call to OutgoingContactChain')
           }
 
-          return(NetworkSummary(x, root, tEnd, days)[, c('root',
-                                                         'outBegin',
-                                                         'outEnd',
-                                                         'outDays',
-                                                         'outgoingContactChain')])
+          if(all(is.null(tEnd), is.null(days))) {
+              inBegin <- outBegin
+              inEnd <- outBegin
+          } else {
+              inBegin <- NULL
+              inEnd <- NULL
+          }
+
+          return(NetworkSummary(x,
+                                root,
+                                tEnd,
+                                days,
+                                inBegin,
+                                inEnd,
+                                outBegin,
+                                outEnd)[, c('root',
+                                            'outBegin',
+                                            'outEnd',
+                                            'outDays',
+                                            'outgoingContactChain')])
       }
 )
 

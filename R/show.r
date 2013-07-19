@@ -1,3 +1,23 @@
+## Copyright 2013 Stefan Widgren and Maria Noremark,
+## National Veterinary Institute, Sweden
+##
+## Licensed under the EUPL, Version 1.1 or - as soon they
+## will be approved by the European Commission - subsequent
+## versions of the EUPL (the "Licence");
+## You may not use this work except in compliance with the
+## Licence.
+## You may obtain a copy of the Licence at:
+##
+## http://ec.europa.eu/idabc/eupl
+##
+## Unless required by applicable law or agreed to in
+## writing, software distributed under the Licence is
+## distributed on an "AS IS" basis,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+## express or implied.
+## See the Licence for the specific language governing
+## permissions and limitations under the Licence.
+
 ##' Show
 ##'
 ##' Shows information of the time-window used for contact tracing and summary of
@@ -59,11 +79,11 @@ setMethod('show',
           cat(sprintf('%s days: %i\n', prefix, object@tEnd - object@tBegin))
 
           if(identical(object@direction, 'out')) {
-              cat(sprintf('%s degree: %s\n', prefix, out_degree(object)))
-              cat(sprintf('%sgoing contact chain: %i\n\n', prefix, outgoing_contact_chain(object)))
+              cat(sprintf('%s degree: %s\n', prefix, OutDegree(object)))
+              cat(sprintf('%sgoing contact chain: %i\n\n', prefix, OutgoingContactChain(object)))
           } else {
-              cat(sprintf('%s degree: %s\n', prefix, in_degree(object)))
-              cat(sprintf('%sgoing contact chain: %i\n\n', prefix, ingoing_contact_chain(object)))
+              cat(sprintf('%s degree: %s\n', prefix, InDegree(object)))
+              cat(sprintf('%sgoing contact chain: %i\n\n', prefix, IngoingContactChain(object)))
           }
 
           if(length(object@source) > 0L) {

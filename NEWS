@@ -1,3 +1,93 @@
+EpiContactTrace 0.8.5
+---------------------
+
+NEW FEATURES
+
+* Updated DESCRIPTION to use Imports instead of Depends for igraph0,
+    plyr, R2HTML.
+
+EpiContactTrace 0.8.4
+---------------------
+
+NEW FEATURES
+
+* Added method ReportObject to be called from a Sweave report template
+  to get the current ContactTrace object.
+
+EpiContactTrace 0.8.3
+---------------------
+
+NEW FEATURES
+
+* inDays and outDays now returned as integer from NetworkSummary of a
+  ContactTrace object.
+
+* Added 'all' to interval argument in Animate to view visualize all
+  movements in one image. The default interval argument was changed
+  to 'all'.
+
+BUGFIX
+
+* Fixed a bug that was introduced in ver 0.7.6 when performing
+  contact tracing.
+
+EpiContactTrace 0.8.2
+---------------------
+
+BUGFIX
+
+* Fixed a bug that was introduced in ver 0.7.6 when calculating
+  IngoingContactChain and OutgoingContactChain using NetworkSummary.
+
+
+EpiContactTrace 0.8.0
+---------------------
+
+NEW FEATURES
+
+* Using the the animation and ggmap package, contacts can now be
+  visualized and animated.
+
+EpiContactTrace 0.7.6
+---------------------
+
+PERFORMANCE IMPROVEMENTS
+
+* Improved performance when calculating contact chain in C++ code by
+  counting the number of visited nodes more efficient.
+
+EpiContactTrace 0.7.5
+---------------------
+
+NEW FEATURES
+
+* Report now uses match.arg to check output format.
+
+EpiContactTrace 0.7.4
+---------------------
+
+NEW FEATURES
+
+* Added the parameters inBegin, inEnd, outBegin and outEnd to
+  NetworkSummary to allow for different time windows for ingoing and
+  outgoing contacts.
+
+EpiContactTrace 0.7.3
+---------------------
+
+BUG FIXES
+
+* Fixed bug in Report. InDegree were not defined for the S4 class
+  Contacts.
+
+EpiContactTrace 0.7.2
+---------------------
+
+NEW FEATURES
+
+* Improved performance in C++ code by using visited nodes more
+  efficient
+
 EpiContactTrace 0.7.1
 ---------------------
 

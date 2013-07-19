@@ -1,26 +1,42 @@
+% Copyright 2013 Stefan Widgren and Maria Noremark,
+% National Veterinary Institute, Sweden
+%
+% Licensed under the EUPL, Version 1.1 or - as soon they
+% will be approved by the European Commission - subsequent
+% versions of the EUPL (the "Licence");
+% You may not use this work except in compliance with the
+% Licence.
+% You may obtain a copy of the Licence at:
+%
+% http://ec.europa.eu/idabc/eupl
+%
+% Unless required by applicable law or agreed to in
+% writing, software distributed under the Licence is
+% distributed on an "AS IS" basis,
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+% express or implied.
+% See the Licence for the specific language governing
+% permissions and limitations under the Licence.
+
 \docType{methods}
 \name{NetworkSummary-methods}
 \alias{NetworkSummary}
-\alias{NetworkSummary-methods}
 \alias{NetworkSummary,ContactTrace-method}
 \alias{NetworkSummary,data.frame-method}
 \alias{NetworkSummary,list-method}
+\alias{NetworkSummary-methods}
 \title{\code{NetworkSummary}}
 \value{
   A \code{data.frame} with the following columns:
   \describe{ \item{root}{ The root of the contact tracing }
 
-  \item{inBegin}{ Equals inBegin in
-  \code{\link{TraceDateInterval}} }
+  \item{inBegin}{ Equals inBegin in \code{\link{Trace}} }
 
-  \item{inEnd}{ Equals inEnd in
-  \code{\link{TraceDateInterval}} }
+  \item{inEnd}{ Equals inEnd in \code{\link{Trace}} }
 
-  \item{outBegin}{ Equals outBegin in
-  \code{\link{TraceDateInterval}} }
+  \item{outBegin}{ Equals outBegin in \code{\link{Trace}} }
 
-  \item{outEnd}{ Equals outEnd in
-  \code{\link{TraceDateInterval}} }
+  \item{outEnd}{ Equals outEnd in \code{\link{Trace}} }
 
   \item{inDegree}{ The \code{\link{InDegree}} of the
   contact tracing }
@@ -43,6 +59,47 @@
   \code{\link{IngoingContactChain}} and
   \code{\link{OutgoingContactChain}}.
 }
+\details{
+  The time period used for \code{NetworkSummary} can either
+  be specified using \code{tEnd} and \code{days} or
+  \code{inBegin}, \code{inEnd}, \code{outBegin} and
+  \code{outEnd}.
+
+  If using \code{tEnd} and \code{days}, the time period for
+  ingoing and outgoing contacts ends at \code{tEnd} and
+  starts at \code{days} prior to \code{tEnd}. The network
+  summary will be calculated for each combination of
+  \code{root}, \code{tEnd} and \code{days}.
+
+  An alternative way is to use \code{inBegin},
+  \code{inEnd}, \code{outBegin} and \code{outEnd}. The time
+  period for ingoing contacts starts at inBegin and ends at
+  inEndDate.  For outgoing contacts the time period starts
+  at outBegin and ends at outEnd. The vectors \code{root}
+  \code{inBegin}, \code{inEnd}, \code{outBegin} and
+  \code{outEnd} must have the same lengths and the network
+  summary will be calculated for each index of them.
+
+  The movements in \code{NetworkSummary} is a
+  \code{data.frame} with the following columns: \describe{
+
+  \item{source}{ an integer or character identifier of the
+  source holding.  }
+
+  \item{destination}{ an integer or character identifier of
+  the destination holding.  }
+
+  \item{t}{ the Date of the transfer }
+
+  \item{id}{ an optional character vector with the identity
+  of the animal.  }
+
+  \item{n}{ an optional numeric vector with the number of
+  animals moved.  }
+
+  \item{category}{ an optional character or factor with
+  category of the animal e.g. Cattle.  } }
+}
 \section{Methods}{
   \describe{ \item{\code{signature(x = "ContactTrace")}}{
   Get the network summary for the ingoing and outgoing
@@ -54,19 +111,41 @@
 
   \item{\code{signature(x = "data.frame")}}{ Get the
   network summary for a data.frame with movements, see
-  examples.  } }
+  details and examples.  } }
 }
 \examples{
 ## Load data
 data(transfers)
 
-## Perform contact tracing
+## Perform contact tracing using tEnd and days
 contactTrace <- Trace(movements=transfers,
                       root=2645,
                       tEnd='2005-10-31',
-                      days=90)
+                      days=91)
 
-NetworkSummary(contactTrace)
+## Calculate network summary from a ContactTrace object
+ns.1 <- NetworkSummary(contactTrace)
+
+## Calculate network summary using tEnd and days
+ns.2 <- NetworkSummary(transfers,
+                       root=2645,
+                       tEnd='2005-10-31',
+                       days=91)
+
+## Check that the result is identical
+identical(ns.1, ns.2)
+
+## Calculate network summary using inBegin, inEnd
+## outBegin and outEnd
+ns.3 <- NetworkSummary(transfers,
+                       root=2645,
+                       inBegin='2005-08-01',
+                       inEnd='2005-10-31',
+                       outBegin='2005-08-01',
+                       outEnd='2005-10-31')
+
+## Check that the result is identical
+identical(ns.2, ns.3)
 
 \dontrun{
 
@@ -97,11 +176,19 @@ NetworkSummary(transfers, root, tEnd, days)
 root <- sort(unique(c(transfers$source,
                       transfers$destination)))
 
-## Perform contact tracing
-result <- NetworkSumary(transfers,
-                        root=root,
-                        tEnd='2005-10-31',
-                        days=90)
+## Perform contact tracing using tEnd and days
+result.1 <- NetworkSummary(transfers,
+                           root=root,
+                           tEnd='2005-10-31',
+                           days=90)
+
+## Perform contact tracing using inBegin, inEnd, outBegin and outEnd.
+result.2 <- NetworkSummary(transfers,
+                           root=root,
+                           inBegin=rep('2005-08-02', length(root)),
+                           inEnd=rep('2005-10-31', length(root)),
+                           outBegin=rep('2005-08-02', length(root)),
+                           outEnd=rep('2005-10-31', length(root)))
 }
 }
 \references{
