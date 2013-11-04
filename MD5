@@ -1,9 +1,9 @@
-ecb56cde04432d99d3678fb904ee2610 *DESCRIPTION
-e2e1c2ae67e7684b51d26c69c221f3f6 *NAMESPACE
-5e4a39339e236e497fd7cfd7193d5193 *NEWS
-56240fdcfd5f1d8cc8802805d7c07fab *R/ContactTrace.r
-92299d126db7612b205264ca8de0653b *R/Contacts.r
-9b50ca8af0ff1a5f6f2251ce36764608 *R/EpiContactTrace-package.r
+f05f1da402c6c1a88080a48796d0bada *DESCRIPTION
+27755d287f0ece5d1b86eb22a20ca241 *NAMESPACE
+b8ef6f1e3d6eee6502dbdcdcbea1a5c4 *NEWS
+fd292f2b174fb672fba673c4af28ac58 *R/ContactTrace.r
+d5fab50d1af731b9fa04ae9f2892f265 *R/Contacts.r
+a7db774edb0fdd3b3065e786fca8f761 *R/EpiContactTrace-package.r
 b7bf7d9af62201df08a970398dc0d34e *R/animate.r
 2140855626d2d203627b42a6a5e59d05 *R/in-degree.r
 a2f9fdace30f1bf97bce832d02cef1d6 *R/ingoing-contact-chain.r
@@ -27,7 +27,7 @@ a0b91eee3cf34bb267e57932669cf6bd *inst/tests/data/movements4.rda
 4a10282023076693b1e78c6f7d17d7e5 *inst/tests/data/movements7.rda
 724d75e8719f2e0a480a38eba7f42d2d *inst/tests/data/ns.rda
 ae71c5af018627ce0490a491eb0be12b *inst/tests/data/transfers.rda
-9f2b013830b0acfebd786a99e4a35b22 *inst/tests/test-trace.R
+b0bcde550931dc2c547ef2be3d24b043 *inst/tests/test-trace.R
 6a1a9f53421bbcb14f845483eda45366 *man/Animate.Rd
 8b903715b24922917458036f0e2bfe7b *man/ContactTrace-class.Rd
 6190b9c9887eebafb7ce315e16912b23 *man/Contacts-class.Rd
