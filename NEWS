@@ -1,3 +1,30 @@
+EpiContactTrace 0.9.0
+---------------------
+
+CHANGES
+
+* Removed Animate method to pass the CRAN checks. Install version
+  0.8.8 manually from the archive if that method is required. See
+  section 6.3 in 'R Installation and Administration' on how to install
+  packages from source.
+
+* Removed dependencies to plyr, R2HTML and Rcpp.
+
+* Removed usage of testthat when testing the package.
+
+* Removed list methods for ContactTrace objects. When calculating
+  measures for several roots, the purpose is to use methods that work
+  directly on the data.frame with movements.
+
+* Updated maintainer email
+
+* Changed 'Title' field in DESCRIPTION to title case
+
+PERFORMANCE IMPROVEMENTS
+
+* Improved performance when calculating ShortestPaths on a data.frame
+  of movements.
+
 EpiContactTrace 0.8.8
 ---------------------
 

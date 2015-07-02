@@ -72,13 +72,25 @@
 ##'   }
 ##' }
 ##'
-##' @name NetworkSummary-methods
-##' @aliases NetworkSummary
-##' @aliases NetworkSummary-methods
-##' @aliases NetworkSummary,ContactTrace-method
-##' @aliases NetworkSummary,list-method
-##' @aliases NetworkSummary,data.frame-method
+##' @rdname NetworkSummary-methods
 ##' @docType methods
+##' @param x a ContactTrace object or a \code{data.frame} with
+##' movements of animals between holdings, see \code{\link{Trace}} for
+##' details.
+##' @param ... Additional arguments to the method
+##' @param root vector of roots to calculate network summary for.
+##' @param tEnd the last date to include ingoing movements. Defaults
+##' to \code{NULL}
+##' @param days the number of previous days before tEnd to include
+##' ingoing movements. Defaults to \code{NULL}
+##' @param inBegin the first date to include ingoing
+##' movements. Defaults to \code{NULL}
+##' @param inEnd the last date to include ingoing movements. Defaults
+##' to \code{NULL}
+##' @param outBegin the first date to include outgoing
+##' movements. Defaults to \code{NULL}
+##' @param outEnd the last date to include outgoing movements. Defaults
+##' to \code{NULL}
 ##' @return A \code{data.frame} with the following columns:
 ##' \describe{
 ##'   \item{root}{
@@ -125,11 +137,6 @@
 ##'     \code{Contacts} of a ContactTrace object.
 ##'   }
 ##'
-##'   \item{\code{signature(x = "list")}}{
-##'     Get the network summary for a list of \code{ContactTrace} objects.
-##'     Each item in the list must be a \code{ContactTrace} object.
-##'   }
-##'
 ##'   \item{\code{signature(x = "data.frame")}}{
 ##'     Get the network summary for a data.frame with movements,
 ##'     see details and examples.
@@ -148,10 +155,9 @@
 ##'     Medicine 99 (2011) 78-90, doi: 10.1016/j.prevetmed.2010.12.009
 ##' }
 ##' @keywords methods
-##' @import plyr
-##' @export
 ##' @useDynLib EpiContactTrace
 ##' @examples
+##' \dontrun{
 ##'
 ##' ## Load data
 ##' data(transfers)
@@ -185,8 +191,6 @@
 ##'
 ##' ## Check that the result is identical
 ##' identical(ns.2, ns.3)
-##'
-##' \dontrun{
 ##'
 ##' ## When calculating the network summary for a data.frame of movements
 ##' ## a data.frame for each combination of root, tEnd and days are returned.
@@ -229,11 +233,12 @@
 ##'                            outBegin=rep('2005-08-02', length(root)),
 ##'                            outEnd=rep('2005-10-31', length(root)))
 ##' }
-##'
 setGeneric('NetworkSummary',
            signature = 'x',
            function(x, ...) standardGeneric('NetworkSummary'))
 
+##' @rdname NetworkSummary-methods
+##' @export
 setMethod('NetworkSummary',
           signature(x = 'ContactTrace'),
           function(x)
@@ -252,22 +257,8 @@ setMethod('NetworkSummary',
       }
 )
 
-setMethod('NetworkSummary',
-          signature(x = 'list'),
-          function(x)
-      {
-          if(!all(sapply(x, function(y) length(y)) == 1)) {
-              stop('Unexpected length of list')
-          }
-
-          if(!all(sapply(x, function(y) class(y)) == 'ContactTrace')) {
-              stop('Unexpected object in list')
-          }
-
-          return(ldply(x, NetworkSummary)[,-1])
-      }
-)
-
+##' @rdname NetworkSummary-methods
+##' @export
 setMethod('NetworkSummary',
           signature(x = 'data.frame'),
           function(x,

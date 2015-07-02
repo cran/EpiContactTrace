@@ -1,4 +1,4 @@
-## Copyright 2013 Stefan Widgren and Maria Noremark,
+## Copyright 2013-2015 Stefan Widgren and Maria Noremark,
 ## National Veterinary Institute, Sweden
 ##
 ## Licensed under the EUPL, Version 1.1 or - as soon they
@@ -67,23 +67,15 @@
 ##'   }
 ##' }
 ##'
-##' @name InDegree-methods
-##' @aliases InDegree
-##' @aliases InDegree-methods
-##' @aliases InDegree,Contacts-method
-##' @aliases InDegree,ContactTrace-method
-##' @aliases InDegree,list-method
-##' @aliases InDegree,data.frame-method
+##' @rdname InDegree-methods
 ##' @docType methods
+##' @keywords methods
+##' @include Contacts.r
+##' @include ContactTrace.r
 ##' @section Methods:
 ##' \describe{
 ##'   \item{\code{signature(x = "ContactTrace")}}{
 ##'     Get the InDegree of a \code{ContactTrace} object.
-##'   }
-##'
-##'   \item{\code{signature(x = "list")}}{
-##'     Get the InDegree for a list of \code{ContactTrace} objects.
-##'     Each item in the list must be a \code{ContactTrace} object.
 ##'   }
 ##'
 ##'   \item{\code{signature(x = "data.frame")}}{
@@ -94,6 +86,7 @@
 ##' @param x a ContactTrace object, or a list of ContactTrace objects
 ##' or a \code{data.frame} with movements of animals between holdings,
 ##' see \code{\link{Trace}} for details.
+##' @param ... Additional arguments to the method
 ##' @param root vector of roots to calculate indegree for.
 ##' @param tEnd the last date to include ingoing movements. Defaults
 ##' to \code{NULL}
@@ -137,9 +130,8 @@
 ##'     disease control and riskbased surveillance.  Preventive Veterinary
 ##'     Medicine 99 (2011) 78-90, doi: 10.1016/j.prevetmed.2010.12.009
 ##' }
-##' @keywords methods
-##' @export
 ##' @examples
+##' \dontrun{
 ##'
 ##' ## Load data
 ##' data(transfers)
@@ -162,7 +154,6 @@
 ##' ## Check that the result is identical
 ##' identical(id.1, id.2)
 ##'
-##' \dontrun{
 ##' ## Calculate indegree for all included herds
 ##' ## First extract all source and destination from the dataset
 ##' root <- sort(unique(c(transfers$source,
@@ -174,49 +165,42 @@
 ##'                    tEnd='2005-10-31',
 ##'                    days=91)
 ##' }
-##'
-setGeneric('InDegree',
-           signature = 'x',
-           function(x, ...) standardGeneric('InDegree'))
+setGeneric("InDegree",
+           signature = "x",
+           function(x, ...) standardGeneric("InDegree"))
 
-setMethod('InDegree',
-          signature(x = 'Contacts'),
+##' @rdname InDegree-methods
+##' @export
+setMethod("InDegree",
+          signature(x = "Contacts"),
           function(x)
       {
-          if(!identical(x@direction, 'in')) {
-              stop('Unable to determine InDegree for outgoing contacts')
+          if(!identical(x@direction, "in")) {
+              stop("Unable to determine InDegree for outgoing contacts")
           }
 
           return(length(unique(x@source[x@destination==x@root])))
       }
 )
 
-setMethod('InDegree',
-          signature(x = 'ContactTrace'),
+##' @rdname InDegree-methods
+##' @export
+setMethod("InDegree",
+          signature(x = "ContactTrace"),
           function (x)
       {
-          return(NetworkSummary(x)[, c('root',
-                                       'inBegin',
-                                       'inEnd',
-                                       'inDays',
-                                       'inDegree')])
+          return(NetworkSummary(x)[, c("root",
+                                       "inBegin",
+                                       "inEnd",
+                                       "inDays",
+                                       "inDegree")])
       }
 )
 
-setMethod('InDegree',
-          signature(x = 'list'),
-          function(x)
-      {
-          return(NetworkSummary(x)[, c('root',
-                                       'inBegin',
-                                       'inEnd',
-                                       'inDays',
-                                       'inDegree')])
-      }
-)
-
-setMethod('InDegree',
-          signature(x = 'data.frame'),
+##' @rdname InDegree-methods
+##' @export
+setMethod("InDegree",
+          signature(x = "data.frame"),
           function(x,
                    root,
                    tEnd = NULL,
@@ -225,7 +209,7 @@ setMethod('InDegree',
                    inEnd = NULL)
       {
           if(missing(root)) {
-              stop('Missing parameters in call to InDegree')
+              stop("Missing parameters in call to InDegree")
           }
 
           if(all(is.null(tEnd), is.null(days))) {
@@ -243,10 +227,10 @@ setMethod('InDegree',
                                 inBegin,
                                 inEnd,
                                 outBegin,
-                                outEnd)[, c('root',
-                                            'inBegin',
-                                            'inEnd',
-                                            'inDays',
-                                            'inDegree')])
+                                outEnd)[, c("root",
+                                            "inBegin",
+                                            "inEnd",
+                                            "inDays",
+                                            "inDegree")])
       }
 )

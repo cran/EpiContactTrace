@@ -1,4 +1,4 @@
-## Copyright 2013 Stefan Widgren and Maria Noremark,
+## Copyright 2013-2015 Stefan Widgren and Maria Noremark,
 ## National Veterinary Institute, Sweden
 ##
 ## Licensed under the EUPL, Version 1.1 or - as soon they
@@ -68,18 +68,16 @@
 ##'   }
 ##' }
 ##'
-##' @name OutDegree-methods
-##' @aliases OutDegree
-##' @aliases OutDegree-methods
-##' @aliases OutDegree,Contacts-method
-##' @aliases OutDegree,ContactTrace-method
-##' @aliases OutDegree,list-method
-##' @aliases OutDegree,data.frame-method
+##' @rdname OutDegree-methods
 ##' @docType methods
+##' @keywords methods
+##' @include Contacts.r
+##' @include ContactTrace.r
 ##' @seealso \code{\link{NetworkSummary}}
 ##' @param x a ContactTrace object, or a list of ContactTrace objects
 ##' or a \code{data.frame} with movements of animals between holdings,
 ##' see \code{\link{Trace}} for details.
+##' @param ... Additional arguments to the method
 ##' @param root vector of roots to calculate outdegree for.
 ##' @param tEnd the last date to include outgoing movements. Defaults
 ##' to \code{NULL}
@@ -117,11 +115,6 @@
 ##'     Get the OutDegree of a \code{ContactTrace} object.
 ##'   }
 ##'
-##'   \item{\code{signature(x = "list")}}{
-##'     Get the OutDegree for a list of \code{ContactTrace} objects.
-##'     Each item in the list must be a \code{ContactTrace} object.
-##'   }
-##'
 ##'   \item{\code{signature(x = "data.frame")}}{
 ##'     Get the OutDegree for a data.frame with movements, see details and examples.
 ##'   }
@@ -137,9 +130,8 @@
 ##'     disease control and riskbased surveillance.  Preventive Veterinary
 ##'     Medicine 99 (2011) 78-90, doi: 10.1016/j.prevetmed.2010.12.009
 ##' }
-##' @keywords methods
-##' @export
 ##' @examples
+##' \dontrun{
 ##'
 ##' ## Load data
 ##' data(transfers)
@@ -162,7 +154,6 @@
 ##' ## Check that the result is identical
 ##' identical(od.1, od.2)
 ##'
-##' \dontrun{
 ##' ## Calculate outdegree for all included herds
 ##' ## First extract all source and destination from the dataset
 ##' root <- sort(unique(c(transfers$source,
@@ -174,49 +165,42 @@
 ##'                     tEnd='2005-10-31',
 ##'                     days=91)
 ##' }
-##'
-setGeneric('OutDegree',
-           signature = 'x',
-           function(x, ...) standardGeneric('OutDegree'))
+setGeneric("OutDegree",
+           signature = "x",
+           function(x, ...) standardGeneric("OutDegree"))
 
-setMethod('OutDegree',
-          signature(x = 'Contacts'),
+##' @rdname OutDegree-methods
+##' @export
+setMethod("OutDegree",
+          signature(x = "Contacts"),
           function (x)
       {
-          if(!identical(x@direction, 'out')) {
-              stop('Unable to determine OutDegree for ingoing contacts')
+          if(!identical(x@direction, "out")) {
+              stop("Unable to determine OutDegree for ingoing contacts")
           }
 
           return(length(unique(x@destination[x@source==x@root])))
       }
 )
 
-setMethod('OutDegree',
-          signature(x = 'ContactTrace'),
+##' @rdname OutDegree-methods
+##' @export
+setMethod("OutDegree",
+          signature(x = "ContactTrace"),
           function (x)
       {
-          return(NetworkSummary(x)[, c('root',
-                                       'outBegin',
-                                       'outEnd',
-                                       'outDays',
-                                       'outDegree')])
+          return(NetworkSummary(x)[, c("root",
+                                       "outBegin",
+                                       "outEnd",
+                                       "outDays",
+                                       "outDegree")])
       }
 )
 
-setMethod('OutDegree',
-          signature(x = 'list'),
-          function(x)
-      {
-          return(NetworkSummary(x)[, c('root',
-                                       'outBegin',
-                                       'outEnd',
-                                       'outDays',
-                                       'outDegree')])
-      }
-)
-
-setMethod('OutDegree',
-          signature(x = 'data.frame'),
+##' @rdname OutDegree-methods
+##' @export
+setMethod("OutDegree",
+          signature(x = "data.frame"),
           function(x,
                    root,
                    tEnd = NULL,
@@ -225,7 +209,7 @@ setMethod('OutDegree',
                    outEnd = NULL)
       {
           if(missing(root)) {
-              stop('Missing parameters in call to OutDegree')
+              stop("Missing parameters in call to OutDegree")
           }
 
           if(all(is.null(tEnd), is.null(days))) {
@@ -243,10 +227,10 @@ setMethod('OutDegree',
                                 inBegin,
                                 inEnd,
                                 outBegin,
-                                outEnd)[, c('root',
-                                            'outBegin',
-                                            'outEnd',
-                                            'outDays',
-                                            'outDegree')])
+                                outEnd)[, c("root",
+                                            "outBegin",
+                                            "outEnd",
+                                            "outDays",
+                                            "outDegree")])
       }
 )

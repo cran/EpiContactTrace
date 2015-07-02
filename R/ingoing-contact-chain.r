@@ -69,18 +69,16 @@
 ##'   }
 ##' }
 ##'
-##' @name IngoingContactChain-methods
-##' @aliases IngoingContactChain
-##' @aliases IngoingContactChain-methods
-##' @aliases IngoingContactChain,Contacts-method
-##' @aliases IngoingContactChain,ContactTrace-method
-##' @aliases IngoingContactChain,list-method
-##' @aliases IngoingContactChain,data.frame-method
+##' @rdname IngoingContactChain-methods
 ##' @docType methods
+##' @keywords methods
+##' @include Contacts.r
+##' @include ContactTrace.r
 ##' @seealso \code{\link{NetworkSummary}}
 ##' @param x a ContactTrace object, or a list of ContactTrace objects
 ##' or a \code{data.frame} with movements of animals between holdings,
 ##' see \code{\link{Trace}} for details.
+##' @param ... Additional arguments to the method
 ##' @param root vector of roots to calculate ingoing contact chain
 ##' for.
 ##' @param tEnd the last date to include ingoing movements. Defaults
@@ -120,11 +118,6 @@
 ##'     Get the IngoingContactChain of a \code{ContactTrace} object.
 ##'   }
 ##'
-##'   \item{\code{signature(x = "list")}}{
-##'     Get the IngoingContactChain for a list of \code{ContactTrace} objects.
-##'     Each item in the list must be a \code{ContactTrace} object.
-##'   }
-##'
 ##'   \item{\code{signature(x = "data.frame")}}{
 ##'     Get the IngoingContactChain for a data.frame with movements,
 ##'     see details and examples.
@@ -141,9 +134,8 @@
 ##'     disease control and riskbased surveillance.  Preventive Veterinary
 ##'     Medicine 99 (2011) 78-90, doi: 10.1016/j.prevetmed.2010.12.009
 ##' }
-##' @keywords methods
-##' @export
 ##' @examples
+##' \dontrun{
 ##'
 ##' ## Load data
 ##' data(transfers)
@@ -166,7 +158,6 @@
 ##' ## Check that the result is identical
 ##' identical(ic.1, ic.2)
 ##'
-##' \dontrun{
 ##' ## Calculate ingoing contact chain for all included herds
 ##' ## First extract all source and destination from the dataset
 ##' root <- sort(unique(c(transfers$source,
@@ -178,49 +169,42 @@
 ##'                               tEnd='2005-10-31',
 ##'                               days=91)
 ##' }
-##'
-setGeneric('IngoingContactChain',
-           signature = 'x',
-           function(x, ...) standardGeneric('IngoingContactChain'))
+setGeneric("IngoingContactChain",
+           signature = "x",
+           function(x, ...) standardGeneric("IngoingContactChain"))
 
-setMethod('IngoingContactChain',
-          signature(x = 'Contacts'),
+##' @rdname IngoingContactChain-methods
+##' @export
+setMethod("IngoingContactChain",
+          signature(x = "Contacts"),
           function (x)
       {
-          if(!identical(x@direction, 'in')) {
-              stop('Unable to determine IngoingContactChain for outgoing contacts')
+          if(!identical(x@direction, "in")) {
+              stop("Unable to determine IngoingContactChain for outgoing contacts")
           }
 
           return(length(setdiff(x@source,x@root)))
       }
 )
 
-setMethod('IngoingContactChain',
-          signature(x = 'ContactTrace'),
+##' @rdname IngoingContactChain-methods
+##' @export
+setMethod("IngoingContactChain",
+          signature(x = "ContactTrace"),
           function (x)
       {
-          return(NetworkSummary(x)[, c('root',
-                                       'inBegin',
-                                       'inEnd',
-                                       'inDays',
-                                       'ingoingContactChain')])
+          return(NetworkSummary(x)[, c("root",
+                                       "inBegin",
+                                       "inEnd",
+                                       "inDays",
+                                       "ingoingContactChain")])
       }
 )
 
-setMethod('IngoingContactChain',
-          signature(x = 'list'),
-          function(x)
-      {
-          return(NetworkSummary(x)[, c('root',
-                                       'inBegin',
-                                       'inEnd',
-                                       'inDays',
-                                       'ingoingContactChain')])
-      }
-)
-
-setMethod('IngoingContactChain',
-          signature(x = 'data.frame'),
+##' @rdname IngoingContactChain-methods
+##' @export
+setMethod("IngoingContactChain",
+          signature(x = "data.frame"),
           function(x,
                    root,
                    tEnd = NULL,
@@ -229,7 +213,7 @@ setMethod('IngoingContactChain',
                    inEnd = NULL)
       {
           if(missing(root)) {
-              stop('Missing parameters in call to IngoingContactChain')
+              stop("Missing parameters in call to IngoingContactChain")
           }
 
           if(all(is.null(tEnd), is.null(days))) {
@@ -247,11 +231,10 @@ setMethod('IngoingContactChain',
                                 inBegin,
                                 inEnd,
                                 outBegin,
-                                outEnd)[, c('root',
-                                            'inBegin',
-                                            'inEnd',
-                                            'inDays',
-                                            'ingoingContactChain')])
+                                outEnd)[, c("root",
+                                            "inBegin",
+                                            "inEnd",
+                                            "inDays",
+                                            "ingoingContactChain")])
       }
 )
-

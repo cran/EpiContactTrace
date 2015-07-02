@@ -40,6 +40,7 @@
 ##' }
 ##' @name ContactTrace-class
 ##' @docType class
+##' @include Contacts.r
 ##' @section Objects from the Class: Objects can be created by calls of the
 ##' form \code{new("ContactTrace",root, ingoingContacts, outgoingContacts,...)}
 ##' @keywords classes
@@ -57,17 +58,16 @@
 ##'
 ##' ## Show structure
 ##' str(contactTrace)
-##'
-setClass('ContactTrace',
-         slots = c(root = 'character',
-                   ingoingContacts = 'Contacts',
-                   outgoingContacts = 'Contacts'))
+setClass("ContactTrace",
+         slots = c(root             = "character",
+                   ingoingContacts  = "Contacts",
+                   outgoingContacts = "Contacts"))
 
-setAs(from='ContactTrace',
-      to='data.frame',
-      def=function(from)
+setAs(from = "ContactTrace",
+      to   = "data.frame",
+      def  = function(from)
   {
-      return(rbind(as(from@ingoingContacts, 'data.frame'),
-                   as(from@outgoingContacts, 'data.frame')))
+      return(rbind(as(from@ingoingContacts, "data.frame"),
+                   as(from@outgoingContacts, "data.frame")))
   }
 )

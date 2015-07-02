@@ -29,11 +29,13 @@
 ##' network tree structure given by the depth first search is shown by
 ##' \code{\link{show}}.
 ##'
-##' @name NetworkStructure-methods
-##' @aliases NetworkStructure NetworkStructure-methods
-##' NetworkStructure,Contacts-method NetworkStructure,ContactTrace-method
-##' NetworkStructure,list-method
+##' @rdname NetworkStructure-methods
 ##' @docType methods
+##' @keywords methods
+##' @include Contacts.r
+##' @include ContactTrace.r
+##' @param object A \code{\linkS4class{Contacts}} or
+##' \code{linkS4class{ContactTrace}} object.
 ##' @return A \code{data.frame} with the following columns:
 ##' \describe{
 ##'   \item{root}{The root of the contact tracing}
@@ -91,10 +93,8 @@
 ##'   }
 ##' }
 ##' @seealso \code{\link{show}}.
-##' @keywords methods
-##' @import plyr
-##' @export
 ##' @examples
+##' \dontrun{
 ##'
 ##' ## Load data
 ##' data(transfers)
@@ -106,13 +106,15 @@
 ##'                       days=90)
 ##'
 ##' NetworkStructure(contactTrace)
-##'
-setGeneric('NetworkStructure',
-           signature = 'object',
-           function(object) standardGeneric('NetworkStructure'))
+##' }
+setGeneric("NetworkStructure",
+           signature = "object",
+           function(object) standardGeneric("NetworkStructure"))
 
-setMethod('NetworkStructure',
-          signature(object = 'Contacts'),
+##' @rdname NetworkStructure-methods
+##' @export
+setMethod("NetworkStructure",
+          signature(object = "Contacts"),
           function(object)
       {
           if(length(object@source) > 0L) {
@@ -123,7 +125,7 @@ setMethod('NetworkStructure',
                          deparse.level=0)
 
               ## To be able to identify duplicate rows, create strings from rows
-              tmp <- apply(m, 1, function(x) paste(x, collapse='\r'))
+              tmp <- apply(m, 1, function(x) paste(x, collapse="\r"))
 
               ## Identify which rows are not identical to previous rows.
               ## row[i] != row[i-1] for all i > 1
@@ -131,18 +133,18 @@ setMethod('NetworkStructure',
 
               ## Select the i rows, including first row
               m <- as.data.frame(m[c(TRUE, i), , drop=FALSE], stringsAsFactors=FALSE)
-              names(m) <- c('source', 'destination', 'distance')
+              names(m) <- c("source", "destination", "distance")
 
               ## Convert distance from character to integer
               m$distance <- as.integer(m$distance)
 
-              if(identical(object@direction, 'in')) {
+              if(identical(object@direction, "in")) {
                   result <- data.frame(root=object@root,
                                        inBegin=object@tBegin,
                                        inEnd=object@tEnd,
                                        outBegin=as.Date(as.character(NA)),
                                        outEnd=as.Date(as.character(NA)),
-                                       direction='in',
+                                       direction="in",
                                        stringsAsFactors=FALSE)
               } else {
                   result <- data.frame(root=object@root,
@@ -150,7 +152,7 @@ setMethod('NetworkStructure',
                                        inEnd=as.Date(as.character(NA)),
                                        outBegin=object@tBegin,
                                        outEnd=object@tEnd,
-                                       direction='out',
+                                       direction="out",
                                        stringsAsFactors=FALSE)
               }
 
@@ -171,27 +173,13 @@ setMethod('NetworkStructure',
       }
 )
 
-setMethod('NetworkStructure',
-          signature(object='ContactTrace'),
+##' @rdname NetworkStructure-methods
+##' @export
+setMethod("NetworkStructure",
+          signature(object="ContactTrace"),
           function(object)
       {
           return(rbind(NetworkStructure(object@ingoingContacts),
                        NetworkStructure(object@outgoingContacts)))
-      }
-)
-
-setMethod('NetworkStructure',
-          signature(object = 'list'),
-          function(object)
-      {
-          if(!all(sapply(object, function(x) length(x)) == 1)) {
-              stop('Unexpected length of list')
-          }
-
-          if(!all(sapply(object, function(x) class(x)) == 'ContactTrace')) {
-              stop('Unexpected object in list')
-          }
-
-          return(ldply(object, NetworkStructure)[,-1])
       }
 )

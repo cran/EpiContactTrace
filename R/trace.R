@@ -71,7 +71,6 @@
 ##'   }
 ##' }
 ##'
-##' @usage Trace(movements, root, tEnd, days, inBegin, inEnd, outBegin, outEnd)
 ##' @param movements a \code{data.frame} data.frame with movements,
 ##' see details.
 ##' @param root vector of roots to perform contact tracing for.
@@ -100,6 +99,7 @@
 ##' }
 ##' @export
 ##' @examples
+##' \dontrun{
 ##'
 ##' ## Load data
 ##' data(transfers)
@@ -124,8 +124,6 @@
 ##'
 ##' ## Show result of contact tracing
 ##' show(trace.1)
-##'
-##' \dontrun{
 ##'
 ##' ## Create a network summary for all included herds
 ##' ## First extract all source and destination from the dataset
