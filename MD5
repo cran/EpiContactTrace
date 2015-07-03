@@ -1,5 +1,5 @@
-f4db645492df59a5d6711a8d9a34ef0a *DESCRIPTION
-62eb5c88597b7af28dc0c794d7ac740b *NAMESPACE
+e4ff16f4508e66f3f4d72b2655baf216 *DESCRIPTION
+f2b62fe6f4e2c28d9d155b1b8c3c3624 *NAMESPACE
 b614f8309c816df8a5e3487846d13128 *NEWS
 0df98e4027d149af43487c685b2b9957 *R/ContactTrace.r
 d5fab50d1af731b9fa04ae9f2892f265 *R/Contacts.r
@@ -11,7 +11,7 @@ b1c014c44bedebde35b7bf4861594a9e *R/ingoing-contact-chain.r
 950e59f0430eb5dc4eccbddf340992d1 *R/out-degree.r
 5eed7884850ec720469e55eda98e9992 *R/outgoing-contact-chain.r
 ad3fd2188a78051cb035e5b637435b91 *R/plot.r
-f256d3e65d8d11fc83f7c512d24c19b8 *R/report.r
+38e9feb22c5dff9cad5642ac4fd112c9 *R/report.r
 76b7d6f05e1dd791790e2a096aa9f112 *R/shortest-paths.r
 de3136a4b0dc54abe6f7aa01e4a15fa4 *R/show.r
 3e9129280ca8281c6e751a3adf65d845 *R/trace.r
@@ -30,7 +30,7 @@ ddae48c586f41ff3257247a77ecab68a *man/NetworkStructure-methods.Rd
 70ca009c94295d3a35b6f1e0e73f5f74 *man/NetworkSummary-methods.Rd
 5ee17df3864eb6e7d2ecee03d2ddda4c *man/OutDegree-methods.Rd
 616dfe3e04eb978927984aa8e276b7dd *man/OutgoingContactChain-methods.Rd
-56c19e73be550b389a87586da32b4784 *man/Report-methods.Rd
+83243ad9433dc3c5ee3b05b930802ec2 *man/Report-methods.Rd
 1cb0aa448593854253f267336eb3c7c3 *man/ReportObject.Rd
 f2e4d4710f3ece4950d028541ef703a8 *man/ShortestPaths-methods.Rd
 f1aba3e052db4944ad192bd9e9c42d98 *man/Trace.Rd
@@ -39,7 +39,7 @@ f1aba3e052db4944ad192bd9e9c42d98 *man/Trace.Rd
 ac515531ede8fdaafe3ea3e3b77718c4 *man/position_tree.Rd
 568884ecde4dff37497abc28de85e0ea *man/show-methods.Rd
 cd69b2b71c8e074107a02c719a0f801a *man/transfers.Rd
-466f4ae5ef5f4ee2d48ba1487dcf8a1f *src/trace.cpp
+bce3fd7878f5f4bf04ea067a590dfcd6 *src/trace.cpp
 d4144253dcd4528cbcbf20146e7bba2c *tests/arguments.R
 9fc102486971ab55d4cd1c3da7629085 *tests/contact-chain.R
 4d936579c2f63912565adfd7d41b2162 *tests/degree.R
