@@ -1,4 +1,4 @@
-// Copyright 2013-2015 Stefan Widgren and Maria Noremark,
+// Copyright 2013-2017 Stefan Widgren and Maria Noremark,
 // National Veterinary Institute, Sweden
 //
 // Licensed under the EUPL, Version 1.1 or - as soon they
@@ -37,36 +37,65 @@ public:
   int t_;
 };
 
-class CompareContact
-{
+class CompareContact {
 public:
-  bool operator()(const Contact& c, int t)
-  {
-    return c.t_ < t;
-  }
+    bool operator()(const Contact& c, int t) {
+        return c.t_ < t;
+    }
 
-  bool operator()(int t, const Contact& c)
-  {
-    return t < c.t_;
-  }
+    bool operator()(int t, const Contact& c) {
+        return t < c.t_;
+    }
 };
 
 // Help class to keep track of visited nodes.
-class VisitedNodes
-{
+class VisitedNodes {
 public:
-  VisitedNodes(size_t numberOfIdentifiers)
-    : numberOfVisitedNodes(0),
-      visitedNodes(numberOfIdentifiers)
-  {}
+    VisitedNodes(size_t numberOfIdentifiers)
+        : numberOfVisitedNodes(0),
+          visitedNodes(numberOfIdentifiers)
+        {}
 
-  int N(void) const {return numberOfVisitedNodes;}
-  void Update(int node, int tBegin, int tEnd, bool ingoing);
-  bool Visit(int node, int tBegin, int tEnd, bool ingoing);
+    int N(void) const {
+        return numberOfVisitedNodes;
+    }
+
+    void Update(int node, int tBegin, int tEnd, bool ingoing) {
+        if (visitedNodes[node].first) {
+            if (ingoing) {
+                if (tEnd > visitedNodes[node].second) {
+                    visitedNodes[node].second = tEnd;
+                }
+            } else if (tBegin < visitedNodes[node].second) {
+                visitedNodes[node].second = tBegin;
+            }
+        } else {
+            visitedNodes[node].first = true;
+            numberOfVisitedNodes++;
+            if (ingoing)
+                visitedNodes[node].second = tEnd;
+            else
+                visitedNodes[node].second = tBegin;
+        }
+    }
+
+    bool Visit(int node, int tBegin, int tEnd, bool ingoing) {
+        if (visitedNodes[node].first) {
+            if (ingoing) {
+                if (tEnd <= visitedNodes[node].second) {
+                    return false;
+                }
+            } else if (tBegin >= visitedNodes[node].second) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 private:
-  int numberOfVisitedNodes;
-  std::vector<std::pair<bool, int> > visitedNodes;
+    int numberOfVisitedNodes;
+    std::vector<std::pair<bool, int> > visitedNodes;
 };
 
 typedef std::vector<Contact> Contacts;
@@ -106,48 +135,6 @@ compareT(std::pair<int, int> const& t1, std::pair<int, int> const& t2)
     return t1.first < t2.first;
 }
 
-// Help class to keep track of visited nodes.
-// class VisitedNodes
-void
-VisitedNodes::Update(int node, int tBegin, int tEnd, bool ingoing)
-{
-    if(visitedNodes[node].first) {
-        if(ingoing) {
-            if(tEnd > visitedNodes[node].second) {
-                visitedNodes[node].second = tEnd;
-            }
-        }
-        else if(tBegin < visitedNodes[node].second) {
-            visitedNodes[node].second = tBegin;
-        }
-    }
-    else {
-        visitedNodes[node].first = true;
-        numberOfVisitedNodes++;
-        if(ingoing)
-            visitedNodes[node].second = tEnd;
-        else
-            visitedNodes[node].second = tBegin;
-    }
-}
-
-bool
-VisitedNodes::Visit(int node, int tBegin, int tEnd, bool ingoing)
-{
-    if(visitedNodes[node].first) {
-        if(ingoing) {
-            if(tEnd <= visitedNodes[node].second) {
-                return false;
-            }
-        }
-        else if(tBegin >= visitedNodes[node].second) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 // Lookup of ingoing and outgoing conatcts
 typedef std::pair<std::vector<std::map<int, Contacts> >,
                   std::vector<std::map<int, Contacts> > > ContactsLookup;
@@ -173,13 +160,13 @@ buildContactsLookup(const int *src,
 
     // The contacts must be sorted by t.
     rowid.reserve(len);
-    for(size_t i=0;i<len;++i) {
+    for (size_t i=0;i<len;++i) {
         rowid.push_back(std::make_pair(t[i], i));
     }
 
     sort(rowid.begin(), rowid.end(), compareT);
 
-    for(size_t i=0;i<len;++i) {
+    for (size_t i=0;i<len;++i) {
         int j = rowid[i].second;
 
         // Decrement with one since std::vector is zero-based
@@ -205,12 +192,12 @@ shortestPaths(const std::vector<std::map<int, Contacts> >& data,
 {
     visitedNodes.insert(node);
 
-    for(std::map<int, Contacts>::const_iterator it = data[node].begin(),
+    for (std::map<int, Contacts>::const_iterator it = data[node].begin(),
             end = data[node].end(); it != end; ++it)
     {
         // We are not interested in going in loops or backwards in the
         // search path
-        if(visitedNodes.find(it->first) == visitedNodes.end()) {
+        if (visitedNodes.find(it->first) == visitedNodes.end()) {
             // We are only interested in contacts within the specified
             // time period, so first check the lower bound, tBegin
             Contacts::const_iterator t_begin =
@@ -219,12 +206,12 @@ shortestPaths(const std::vector<std::map<int, Contacts> >& data,
                                  tBegin,
                                  CompareContact());
 
-            if(t_begin != it->second.end() && t_begin->t_ <= tEnd) {
+            if (t_begin != it->second.end() && t_begin->t_ <= tEnd) {
                 int t0, t1;
 
                 std::map<int, std::pair<int, int> >::iterator distance_it =
                     result.find(it->first);
-                if(distance_it == result.end()) {
+                if (distance_it == result.end()) {
                     result[it->first].first = distance;
 
                     // Increment with one since R vector is one-based.
@@ -236,7 +223,7 @@ shortestPaths(const std::vector<std::map<int, Contacts> >& data,
                     distance_it->second.second = t_begin->rowid_ + 1;
                 }
 
-                if(ingoing) {
+                if (ingoing) {
                     // and then the upper bound, tEnd.
                     Contacts::const_iterator t_end =
                         std::upper_bound(t_begin,
@@ -275,7 +262,7 @@ SEXP shortestPaths(const SEXP src,
 		   const SEXP outEnd,
 		   const SEXP numberOfIdentifiers)
 {
-    if(check_arguments(src, dst, t, root, inBegin, inEnd,
+    if (check_arguments(src, dst, t, root, inBegin, inEnd,
                        outBegin, outEnd, numberOfIdentifiers))
         Rf_error("Unable to calculate shortest paths");
 
@@ -293,7 +280,7 @@ SEXP shortestPaths(const SEXP src,
     std::vector<int> outDistance;
     std::vector<int> inIndex;
     std::vector<int> outIndex;
-    for(size_t i=0; i<len; ++i) {
+    for (size_t i=0; i<len; ++i) {
         // Key: node, Value: first: distance, second: original rowid
         std::map<int, std::pair<int, int> > ingoingShortestPaths;
 
@@ -309,7 +296,7 @@ SEXP shortestPaths(const SEXP src,
                       true,
                       ingoingShortestPaths);
 
-        for(std::map<int, std::pair<int, int> >::const_iterator it =
+        for (std::map<int, std::pair<int, int> >::const_iterator it =
                 ingoingShortestPaths.begin();
             it!=ingoingShortestPaths.end(); ++it)
         {
@@ -327,7 +314,7 @@ SEXP shortestPaths(const SEXP src,
                       false,
                       outgoingShortestPaths);
 
-        for(std::map<int, std::pair<int, int> >::const_iterator it =
+        for (std::map<int, std::pair<int, int> >::const_iterator it =
                 outgoingShortestPaths.begin();
             it!=outgoingShortestPaths.end(); ++it)
         {
@@ -386,16 +373,17 @@ traceContacts(const std::vector<std::map<int, Contacts> >& data,
 	      const int distance,
 	      const bool ingoing,
 	      std::vector<int>& resultRowid,
-	      std::vector<int>& resultDistance)
+	      std::vector<int>& resultDistance,
+              const int maxDistance)
 {
     visitedNodes.insert(node);
 
-    for(std::map<int, Contacts>::const_iterator it = data[node].begin(),
+    for (std::map<int, Contacts>::const_iterator it = data[node].begin(),
             end = data[node].end(); it != end; ++it)
     {
         // We are not interested in going in loops or backwards in the
         // search path
-        if(visitedNodes.find(it->first) == visitedNodes.end()) {
+        if (visitedNodes.find(it->first) == visitedNodes.end()) {
             // We are only interested in contacts within the specified
             // time period, so first check the lower bound, tBegin
             Contacts::const_iterator t_begin =
@@ -404,7 +392,7 @@ traceContacts(const std::vector<std::map<int, Contacts> >& data,
                                  tBegin,
                                  CompareContact());
 
-            if(t_begin != it->second.end() && t_begin->t_ <= tEnd) {
+            if (t_begin != it->second.end() && t_begin->t_ <= tEnd) {
                 int t0, t1;
 
                 // and then the upper bound, tEnd.
@@ -414,18 +402,20 @@ traceContacts(const std::vector<std::map<int, Contacts> >& data,
                                      tEnd,
                                      CompareContact());
 
-                for(Contacts::const_iterator iit=t_begin; iit!=t_end; ++iit) {
+                for (Contacts::const_iterator iit=t_begin; iit!=t_end; ++iit) {
                     // Increment with one since R vector is one-based.
                     resultRowid.push_back(iit->rowid_ + 1);
 
                     resultDistance.push_back(distance);
                 }
 
-                if(ingoing) {
+                if (maxDistance > 0 && distance >= maxDistance)
+                    continue;
+
+                if (ingoing) {
                     t0 = tBegin;
                     t1 = (t_end-1)->t_;
-                }
-                else {
+                } else {
                     t0 = t_begin->t_;
                     t1 = tEnd;
                 }
@@ -438,7 +428,8 @@ traceContacts(const std::vector<std::map<int, Contacts> >& data,
                               distance + 1,
                               ingoing,
                               resultRowid,
-                              resultDistance);
+                              resultDistance,
+                              maxDistance);
             }
         }
     }
@@ -453,11 +444,13 @@ SEXP traceContacts(const SEXP src,
 		   const SEXP inEnd,
 		   const SEXP outBegin,
 		   const SEXP outEnd,
-		   const SEXP numberOfIdentifiers)
+		   const SEXP numberOfIdentifiers,
+                   const SEXP maxDistance)
 {
-    if(check_arguments(src, dst, t, root, inBegin, inEnd,
-                       outBegin, outEnd, numberOfIdentifiers))
+    if (check_arguments(src, dst, t, root, inBegin, inEnd, outBegin, outEnd,
+                        numberOfIdentifiers)) {
         Rf_error("Unable to trace contacts");
+    }
 
     ContactsLookup lookup =
         buildContactsLookup(INTEGER(src),
@@ -471,7 +464,7 @@ SEXP traceContacts(const SEXP src,
     std::vector<int> resultDistance;
 
     PROTECT(result = allocVector(VECSXP, 4 * LENGTH(root)));
-    for(size_t i = 0, end = LENGTH(root); i < end; ++i) {
+    for (size_t i = 0, end = LENGTH(root); i < end; ++i) {
         resultRowid.clear();
         resultDistance.clear();
 
@@ -483,7 +476,8 @@ SEXP traceContacts(const SEXP src,
                       1,
                       true,
                       resultRowid,
-                      resultDistance);
+                      resultDistance,
+                      INTEGER(maxDistance)[0]);
 
         SET_VECTOR_ELT(result, 4 * i, vec = allocVector(INTSXP, resultRowid.size()));
         for (size_t j = 0; j < resultRowid.size(); ++j)
@@ -504,7 +498,8 @@ SEXP traceContacts(const SEXP src,
                       1,
                       false,
                       resultRowid,
-                      resultDistance);
+                      resultDistance,
+                      INTEGER(maxDistance)[0]);
 
         SET_VECTOR_ELT(result, 4 * i + 2, vec = allocVector(INTSXP, resultRowid.size()));
         for (size_t j = 0; j < resultRowid.size(); ++j)
@@ -528,12 +523,12 @@ degree(const std::vector<std::map<int, Contacts> >& data,
 {
     int result = 0;
 
-    for(std::map<int, Contacts>::const_iterator it = data[node].begin();
+    for (std::map<int, Contacts>::const_iterator it = data[node].begin();
         it != data[node].end();
         ++it)
     {
         // We are not interested in going in loops.
-        if(node != it->first) {
+        if (node != it->first) {
             // We are only interested in contacts within the specified
             // time period, so first check the lower bound, tBegin
             Contacts::const_iterator t_begin =
@@ -542,7 +537,7 @@ degree(const std::vector<std::map<int, Contacts> >& data,
                                  tBegin,
                                  CompareContact());
 
-            if(t_begin != it->second.end() && t_begin->t_ <= tEnd) {
+            if (t_begin != it->second.end() && t_begin->t_ <= tEnd) {
                 ++result;
             }
         }
@@ -561,10 +556,10 @@ contactChain(const std::vector<std::map<int, Contacts> >& data,
 {
     visitedNodes.Update(node, tBegin, tEnd, ingoing);
 
-    for(std::map<int, Contacts>::const_iterator it = data[node].begin(),
+    for (std::map<int, Contacts>::const_iterator it = data[node].begin(),
             end = data[node].end(); it != end; ++it)
     {
-        if(visitedNodes.Visit(it->first, tBegin, tEnd, ingoing)) {
+        if (visitedNodes.Visit(it->first, tBegin, tEnd, ingoing)) {
             // We are only interested in contacts within the specified
             // time period, so first check the lower bound, tBegin
             Contacts::const_iterator t_begin =
@@ -573,10 +568,10 @@ contactChain(const std::vector<std::map<int, Contacts> >& data,
                                  tBegin,
                                  CompareContact());
 
-            if(t_begin != it->second.end() && t_begin->t_ <= tEnd) {
+            if (t_begin != it->second.end() && t_begin->t_ <= tEnd) {
                 int t0, t1;
 
-                if(ingoing) {
+                if (ingoing) {
                     // and then the upper bound, tEnd.
                     Contacts::const_iterator t_end =
                         std::upper_bound(t_begin,
@@ -586,8 +581,7 @@ contactChain(const std::vector<std::map<int, Contacts> >& data,
 
                     t0 = tBegin;
                     t1 = (t_end-1)->t_;
-                }
-                else {
+                } else {
                     t0 = t_begin->t_;
                     t1 = tEnd;
                 }
@@ -609,7 +603,7 @@ SEXP networkSummary(const SEXP src,
 		    const SEXP outEnd,
 		    const SEXP numberOfIdentifiers)
 {
-    if(check_arguments(src, dst, t, root, inBegin, inEnd,
+    if (check_arguments(src, dst, t, root, inBegin, inEnd,
                        outBegin, outEnd, numberOfIdentifiers))
         Rf_error("Unable to calculate network summary");
 
@@ -625,7 +619,7 @@ SEXP networkSummary(const SEXP src,
     std::vector<int> inDegree;
     std::vector<int> outDegree;
 
-    for(size_t i=0, end=LENGTH(root); i<end; ++i) {
+    for (size_t i=0, end=LENGTH(root); i<end; ++i) {
         VisitedNodes visitedNodesIngoing(INTEGER(numberOfIdentifiers)[0]);
         VisitedNodes visitedNodesOutgoing(INTEGER(numberOfIdentifiers)[0]);
 
