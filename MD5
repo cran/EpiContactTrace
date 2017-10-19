@@ -1,6 +1,6 @@
-0595f6f34f1f0ffa900f62b551e60013 *DESCRIPTION
+a15b456054b091d7e6d7a7bbb7b4da6f *DESCRIPTION
 f3f6cc9194b5f6f30acac1d9ed88bd74 *NAMESPACE
-1cacc34bb48d760a75a0c71a01da4a8f *NEWS
+7f8c8deedd82f5538ca334803faab2d2 *NEWS
 0df98e4027d149af43487c685b2b9957 *R/ContactTrace.r
 d5fab50d1af731b9fa04ae9f2892f265 *R/Contacts.r
 9f99f346b7a387c1bd3aaf293e3cba49 *R/EpiContactTrace-package.r
@@ -17,7 +17,7 @@ de3136a4b0dc54abe6f7aa01e4a15fa4 *R/show.r
 b0ee6b6b82079d29b93c3e133aa1bff3 *R/trace.r
 10bdd7c0fbd179e1c1440293f0376806 *R/tree.r
 ae71c5af018627ce0490a491eb0be12b *data/transfers.rda
-3ca725570738335d217adbe5faddb221 *inst/CITATION
+b2c2a85ef7b6edf700a99dcc223cbc95 *inst/CITATION
 b2ce7f4ba9f5b8a3626cd51ad517fa03 *inst/Sweave/speak-html.rnw
 c0d85e6a733342e3ff1fa796c4ffaa1b *inst/Sweave/speak-latex.rnw
 724d75e8719f2e0a480a38eba7f42d2d *inst/extdata/ns.rda
