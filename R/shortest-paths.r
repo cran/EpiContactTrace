@@ -1,4 +1,4 @@
-## Copyright 2013-2014 Stefan Widgren and Maria Noremark,
+## Copyright 2013-2020 Stefan Widgren and Maria Noremark,
 ## National Veterinary Institute, Sweden
 ##
 ## Licensed under the EUPL, Version 1.1 or - as soon they
@@ -31,7 +31,7 @@
 ##' @rdname ShortestPaths-methods
 ##' @docType methods
 ##' @keywords methods
-##' @include ContactTrace.r
+##' @include ContactTrace.R
 ##' @param x a \code{\linkS4class{ContactTrace}} object, or a
 ##' \code{data.frame} with movements of animals between holdings, see
 ##' \code{\link{Trace}} for details.

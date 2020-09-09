@@ -1,4 +1,4 @@
-## Copyright 2013 Stefan Widgren and Maria Noremark,
+## Copyright 2013-2020 Stefan Widgren and Maria Noremark,
 ## National Veterinary Institute, Sweden
 ##
 ## Licensed under the EUPL, Version 1.1 or - as soon they
@@ -29,8 +29,8 @@
 ##' @docType methods
 ##' @keywords methods
 ##' @export
-##' @include Contacts.r
-##' @include ContactTrace.r
+##' @include Contacts.R
+##' @include ContactTrace.R
 ##' @param object The \code{\linkS4class{Contacts}} or
 ##' \code{\linkS4class{ContactTrace}} \code{object}
 ##' @return None (invisible 'NULL').

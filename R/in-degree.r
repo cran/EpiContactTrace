@@ -1,4 +1,4 @@
-## Copyright 2013-2015 Stefan Widgren and Maria Noremark,
+## Copyright 2013-2020 Stefan Widgren and Maria Noremark,
 ## National Veterinary Institute, Sweden
 ##
 ## Licensed under the EUPL, Version 1.1 or - as soon they
@@ -70,8 +70,8 @@
 ##' @rdname InDegree-methods
 ##' @docType methods
 ##' @keywords methods
-##' @include Contacts.r
-##' @include ContactTrace.r
+##' @include Contacts.R
+##' @include ContactTrace.R
 ##' @section Methods:
 ##' \describe{
 ##'   \item{\code{signature(x = "ContactTrace")}}{
