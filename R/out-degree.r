@@ -64,7 +64,8 @@
 ##'   }
 ##'
 ##'   \item{category}{
-##'     an optional character or factor with category of the animal e.g. Cattle.
+##'     an optional character or factor with category of the animal
+##'     e.g. Cattle.
 ##'   }
 ##' }
 ##'
@@ -116,7 +117,8 @@
 ##'   }
 ##'
 ##'   \item{\code{signature(x = "data.frame")}}{
-##'     Get the OutDegree for a data.frame with movements, see details and examples.
+##'     Get the OutDegree for a data.frame with movements, see details
+##'     and examples.
 ##'   }
 ##' }
 ##' @references \itemize{
@@ -137,19 +139,19 @@
 ##' data(transfers)
 ##'
 ##' ## Perform contact tracing using tEnd and days
-##' contactTrace <- Trace(movements=transfers,
-##'                       root=2645,
-##'                       tEnd='2005-10-31',
-##'                       days=91)
+##' contactTrace <- Trace(movements = transfers,
+##'                       root = 2645,
+##'                       tEnd = "2005-10-31",
+##'                       days = 91)
 ##'
 ##' ## Calculate outdegree from a ContactTrace object
 ##' od.1 <- OutDegree(contactTrace)
 ##'
 ##' ## Calculate outdegree using tEnd and days
-##' od.2 <- OutDegree(transfers,
-##'                   root=2645,
-##'                   tEnd='2005-10-31',
-##'                   days=91)
+##' od.2 <- OutDegree(movements = transfers,
+##'                   root = 2645,
+##'                   tEnd = "2005-10-31",
+##'                   days = 91)
 ##'
 ##' ## Check that the result is identical
 ##' identical(od.1, od.2)
@@ -160,77 +162,68 @@
 ##'                       transfers$destination)))
 ##'
 ##' ## Calculate outdegree
-##' result <- OutDegree(transfers,
-##'                     root=root,
-##'                     tEnd='2005-10-31',
-##'                     days=91)
+##' result <- OutDegree(movements = transfers,
+##'                     root = root,
+##'                     tEnd = "2005-10-31",
+##'                     days = 91)
 ##' }
-setGeneric("OutDegree",
-           signature = "x",
-           function(x, ...) standardGeneric("OutDegree"))
-
-##' @rdname OutDegree-methods
-##' @export
-setMethod("OutDegree",
-          signature(x = "Contacts"),
-          function (x)
-      {
-          if(!identical(x@direction, "out")) {
-              stop("Unable to determine OutDegree for ingoing contacts")
-          }
-
-          return(length(unique(x@destination[x@source==x@root])))
-      }
+setGeneric(
+    "OutDegree",
+    signature = "x",
+    function(x, ...) {
+        standardGeneric("OutDegree")
+    }
 )
 
 ##' @rdname OutDegree-methods
 ##' @export
-setMethod("OutDegree",
-          signature(x = "ContactTrace"),
-          function (x)
-      {
-          return(NetworkSummary(x)[, c("root",
-                                       "outBegin",
-                                       "outEnd",
-                                       "outDays",
-                                       "outDegree")])
-      }
+setMethod(
+    "OutDegree",
+    signature(x = "Contacts"),
+    function(x) {
+        if (!identical(x@direction, "out"))
+            stop("Unable to determine OutDegree for ingoing contacts")
+
+        length(unique(x@destination[x@source == x@root]))
+    }
 )
 
 ##' @rdname OutDegree-methods
 ##' @export
-setMethod("OutDegree",
-          signature(x = "data.frame"),
-          function(x,
-                   root,
-                   tEnd = NULL,
-                   days = NULL,
-                   outBegin = NULL,
-                   outEnd = NULL)
-      {
-          if(missing(root)) {
-              stop("Missing parameters in call to OutDegree")
-          }
+setMethod(
+    "OutDegree",
+    signature(x = "ContactTrace"),
+    function(x) {
+        ns <- NetworkSummary(x)
+        ns[, c("root", "outBegin", "outEnd", "outDays", "outDegree")]
+    }
+)
 
-          if(all(is.null(tEnd), is.null(days))) {
-              inBegin <- outBegin
-              inEnd <- outBegin
-          } else {
-              inBegin <- NULL
-              inEnd <- NULL
-          }
+##' @rdname OutDegree-methods
+##' @export
+setMethod(
+    "OutDegree",
+    signature(x = "data.frame"),
+    function(x,
+             root,
+             tEnd = NULL,
+             days = NULL,
+             outBegin = NULL,
+             outEnd = NULL) {
+        if (missing(root))
+            stop("Missing parameters in call to OutDegree")
 
-          return(NetworkSummary(x,
-                                root,
-                                tEnd,
-                                days,
-                                inBegin,
-                                inEnd,
-                                outBegin,
-                                outEnd)[, c("root",
-                                            "outBegin",
-                                            "outEnd",
-                                            "outDays",
-                                            "outDegree")])
-      }
+        if (all(is.null(tEnd), is.null(days))) {
+            inBegin <- outBegin
+            inEnd <- outBegin
+        } else {
+            inBegin <- NULL
+            inEnd <- NULL
+        }
+
+        ns <- NetworkSummary(
+            x, root, tEnd, days, inBegin, inEnd, outBegin, outEnd)
+
+        ns[, c("root", "outBegin", "outEnd", "outDays", "outDegree")]
+    }
 )

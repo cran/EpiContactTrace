@@ -5,6 +5,7 @@
 \alias{NetworkStructure}
 \alias{NetworkStructure,Contacts-method}
 \alias{NetworkStructure,ContactTrace-method}
+\alias{NetworkStructure,list-method}
 \title{\code{NetworkStructure}}
 \usage{
 NetworkStructure(object)
@@ -12,6 +13,8 @@ NetworkStructure(object)
 \S4method{NetworkStructure}{Contacts}(object)
 
 \S4method{NetworkStructure}{ContactTrace}(object)
+
+\S4method{NetworkStructure}{list}(object)
 }
 \arguments{
 \item{object}{A \code{\linkS4class{Contacts}} or
@@ -61,14 +64,14 @@ A \code{data.frame} with the following columns:
 }
 \description{
 Methods for function \code{NetworkStructure} in package
-\pkg{EpiContactTrace} to get the network tree structure from the contact
-tracing.
+\pkg{EpiContactTrace} to get the network tree structure from the
+contact tracing.
 }
 \details{
-The contact tracing performs a depth first search starting at the root. The
-\code{NetworkStructure} gives the distance from root at each node. The
-network tree structure given by the depth first search is shown by
-\code{\link{show}}.
+The contact tracing performs a depth first search starting at the
+root. The \code{NetworkStructure} gives the distance from root at
+each node. The network tree structure given by the depth first
+search is shown by \code{\link{show}}.
 }
 \section{Methods}{
 
@@ -90,19 +93,16 @@ network tree structure given by the depth first search is shown by
 }
 
 \examples{
-\dontrun{
-
 ## Load data
 data(transfers)
 
 ## Perform contact tracing
-contactTrace <- Trace(movements=transfers,
-                      root=2645,
-                      tEnd='2005-10-31',
-                      days=90)
+contactTrace <- Trace(movements = transfers,
+                      root = 2645,
+                      tEnd = "2005-10-31",
+                      days = 90)
 
 NetworkStructure(contactTrace)
-}
 }
 \seealso{
 \code{\link{show}}.

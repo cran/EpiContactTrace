@@ -4,12 +4,15 @@
 \name{NetworkSummary}
 \alias{NetworkSummary}
 \alias{NetworkSummary,ContactTrace-method}
+\alias{NetworkSummary,list-method}
 \alias{NetworkSummary,data.frame-method}
 \title{\code{NetworkSummary}}
 \usage{
 NetworkSummary(x, ...)
 
 \S4method{NetworkSummary}{ContactTrace}(x)
+
+\S4method{NetworkSummary}{list}(x)
 
 \S4method{NetworkSummary}{data.frame}(
   x,
@@ -23,9 +26,10 @@ NetworkSummary(x, ...)
 )
 }
 \arguments{
-\item{x}{a ContactTrace object or a \code{data.frame} with
-movements of animals between holdings, see \code{\link{Trace}} for
-details.}
+\item{x}{a ContactTrace object, a \code{data.frame} with movements
+of animals between holdings (see \code{\link{Trace}} for
+details), or a list of \code{ContactTrace} objects where each
+item in the list must be a \code{ContactTrace} object.}
 
 \item{...}{Additional arguments to the method}
 
@@ -46,8 +50,8 @@ to \code{NULL}}
 \item{outBegin}{the first date to include outgoing
 movements. Defaults to \code{NULL}}
 
-\item{outEnd}{the last date to include outgoing movements. Defaults
-to \code{NULL}}
+\item{outEnd}{the last date to include outgoing
+movements. Defaults to \code{NULL}}
 }
 \value{
 A \code{data.frame} with the following columns:
@@ -90,14 +94,15 @@ A \code{data.frame} with the following columns:
 }
 }
 \description{
-\code{NetworkSummary} gives a summary of the contact tracing including the
-time-window, \code{\link{InDegree}}, \code{\link{OutDegree}},
-\code{\link{IngoingContactChain}} and \code{\link{OutgoingContactChain}}.
+\code{NetworkSummary} gives a summary of the contact tracing
+including the time-window, \code{\link{InDegree}},
+\code{\link{OutDegree}}, \code{\link{IngoingContactChain}} and
+\code{\link{OutgoingContactChain}}.
 }
 \details{
-The time period used for \code{NetworkSummary} can either be specified
-using \code{tEnd} and \code{days} or \code{inBegin}, \code{inEnd},
-\code{outBegin} and \code{outEnd}.
+The time period used for \code{NetworkSummary} can either be
+specified using \code{tEnd} and \code{days} or \code{inBegin},
+\code{inEnd}, \code{outBegin} and \code{outEnd}.
 
 If using \code{tEnd} and \code{days}, the time period for ingoing
 and outgoing contacts ends at \code{tEnd} and starts at
@@ -138,7 +143,8 @@ with the following columns:
   }
 
   \item{category}{
-    an optional character or factor with category of the animal e.g. Cattle.
+    an optional character or factor with category of the animal
+    e.g. Cattle.
   }
 }
 }
@@ -148,6 +154,11 @@ with the following columns:
   \item{\code{signature(x = "ContactTrace")}}{
     Get the network summary for the ingoing and outgoing
     \code{Contacts} of a ContactTrace object.
+  }
+
+  \item{\code{signature(x = "list")}}{
+    Get the network summary for a list of \code{ContactTrace} objects.
+    Each item in the list must be a \code{ContactTrace} object.
   }
 
   \item{\code{signature(x = "data.frame")}}{
@@ -164,38 +175,38 @@ with the following columns:
 data(transfers)
 
 ## Perform contact tracing using tEnd and days
-contactTrace <- Trace(movements=transfers,
-                      root=2645,
-                      tEnd='2005-10-31',
-                      days=91)
+contactTrace <- Trace(movements = transfers,
+                      root = 2645,
+                      tEnd = "2005-10-31",
+                      days = 91)
 
 ## Calculate network summary from a ContactTrace object
-ns.1 <- NetworkSummary(contactTrace)
+ns_1 <- NetworkSummary(contactTrace)
 
 ## Calculate network summary using tEnd and days
-ns.2 <- NetworkSummary(transfers,
-                       root=2645,
-                       tEnd='2005-10-31',
-                       days=91)
+ns_2 <- NetworkSummary(transfers,
+                       root = 2645,
+                       tEnd = "2005-10-31",
+                       days = 91)
 
 ## Check that the result is identical
-identical(ns.1, ns.2)
+identical(ns_1, ns_2)
 
 ## Calculate network summary using inBegin, inEnd
 ## outBegin and outEnd
-ns.3 <- NetworkSummary(transfers,
-                       root=2645,
-                       inBegin='2005-08-01',
-                       inEnd='2005-10-31',
-                       outBegin='2005-08-01',
-                       outEnd='2005-10-31')
+ns_3 <- NetworkSummary(transfers,
+                       root = 2645,
+                       inBegin = "2005-08-01",
+                       inEnd = "2005-10-31",
+                       outBegin = "2005-08-01",
+                       outEnd = "2005-10-31")
 
 ## Check that the result is identical
-identical(ns.2, ns.3)
+identical(ns_2, ns_3)
 
 ## When calculating the network summary for a data.frame of movements
 ## a data.frame for each combination of root, tEnd and days are returned.
-root <- c(1,2,3)
+root <- c(1, 2, 3)
 tEnd <- c("2005-09-01", "2005-10-01")
 days <- c(30, 45)
 
@@ -221,18 +232,18 @@ root <- sort(unique(c(transfers$source,
                       transfers$destination)))
 
 ## Perform contact tracing using tEnd and days
-result.1 <- NetworkSummary(transfers,
-                           root=root,
-                           tEnd='2005-10-31',
-                           days=90)
+result_1 <- NetworkSummary(transfers,
+                           root = root,
+                           tEnd = "2005-10-31",
+                           days = 90)
 
 ## Perform contact tracing using inBegin, inEnd, outBegin and outEnd.
-result.2 <- NetworkSummary(transfers,
-                           root=root,
-                           inBegin=rep('2005-08-02', length(root)),
-                           inEnd=rep('2005-10-31', length(root)),
-                           outBegin=rep('2005-08-02', length(root)),
-                           outEnd=rep('2005-10-31', length(root)))
+result_2 <- NetworkSummary(transfers,
+                           root = root,
+                           inBegin = rep("2005-08-02", length(root)),
+                           inEnd = rep("2005-10-31", length(root)),
+                           outBegin = rep("2005-08-02", length(root)),
+                           outEnd = rep("2005-10-31", length(root)))
 }
 }
 \references{
