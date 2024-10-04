@@ -1,6 +1,6 @@
 Package: EpiContactTrace
 Title: Epidemiological Tool for Contact Tracing
-Version: 0.17.0
+Version: 0.18.0
 Authors@R: c(
     person("Maria", "Noremark", role = c("aut"),
            comment = c(ORCID = "0000-0003-2555-8476")),
@@ -22,11 +22,11 @@ Collate: 'Contacts.R' 'ContactTrace.R' 'EpiContactTrace-package.R'
         'plot.R' 'report.R' 'shortest-paths.R' 'show.R' 'trace.R'
         'tree.R'
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 NeedsCompilation: yes
-Packaged: 2023-04-02 19:39:33 UTC; stefan
+Packaged: 2024-10-04 17:54:02 UTC; stefan
 Author: Maria Noremark [aut] (<https://orcid.org/0000-0003-2555-8476>),
   Stefan Widgren [aut, cre] (<https://orcid.org/0000-0001-5745-2284>)
 Maintainer: Stefan Widgren <stefan.widgren@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-04-02 20:00:02 UTC
+Date/Publication: 2024-10-04 18:20:02 UTC
